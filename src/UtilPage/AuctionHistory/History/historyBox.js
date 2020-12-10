@@ -15,8 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { css } from '@emotion/core';
 import { getSpendingTx } from '../../../utils/explorer';
-import MyBidsModal from "../../GeneralUtils/Active/myBids";
-import BidHistory from "../../GeneralUtils/Active/bidHistory";
+import MyBidsModal from "../../GeneralUtils/General/myBids";
+import BidHistory from "../../GeneralUtils/General/bidHistory";
 
 const override = css`
     display: block;

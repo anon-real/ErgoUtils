@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {Route} from "react-router-dom";
 
-import ActiveAuctions from "./Active";
+import ActiveAuctions from "./General";
 
 import AppHeader from "../../Layout/AppHeader/";
 import AppSidebar from "../../Layout/AppSidebar/";

@@ -45,7 +45,7 @@ const data = {
                 'and you remain the only bidder, then both your initial bid and your auctioned token will be returned to you.',
         },
         {
-            title: "I have started an utils but can't see it in the Active Auction page!",
+            title: "I have started an utils but can't see it in the General Auction page!",
             content:
                 'Starting an utils is basically waiting for an transaction representing the utils to be mined. ' +
                 'Depending on the network traffic, it may take a few minutes for the transaction to be mined and you see your utils. ' +
