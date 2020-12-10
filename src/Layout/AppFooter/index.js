@@ -6,8 +6,8 @@ class AppFooter extends React.Component {
     render() {
         return (
             <Fragment>
+                <div className="divider text-muted bg-premium-dark opacity-1"/>
                 <div className="app-footer">
-                    <div className="divider text-muted bg-premium-dark opacity-1"/>
                     <div className="app-footer__inner">
                         <div className="app-footer-right">
                             <ul className="nav" >
@@ -22,7 +22,7 @@ class AppFooter extends React.Component {
                                     </a>
                                 </li>
                                 <li className="nav-item">
-                                    <a target='_blank' href="https://github.com/anon-real/" className="nav-link">
+                                    <a target='_blank' href="https://github.com/anon-real/ErgoUtils" className="nav-link">
                                         <img
                                             className='mr-2'
                                             style={{ height: '20px', width: '20px' }}
