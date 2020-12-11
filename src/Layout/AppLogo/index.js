@@ -44,7 +44,7 @@ class HeaderLogo extends React.Component {
         return (
             <Fragment>
                 <div className="app-header__logo">
-                    <a href='/' style={{ textDecoration: 'none'}} className='logo-src'>
+                    <a href='/' style={{ textDecoration: 'none'}} className='logo-src mt-3'>
                         {/*<div className="logo-src"/>*/}
                         <img
                             style={{ height: '40px', width: '40px' }}
