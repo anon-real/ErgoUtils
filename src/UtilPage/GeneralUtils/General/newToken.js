@@ -144,6 +144,7 @@ export default class NewToken extends React.Component {
                                 />
                             </Row>
 
+                            <fieldset disabled={this.state.loading}>
                             <Form>
                                 <Row>
                                     <Col md="6">
@@ -287,6 +288,7 @@ export default class NewToken extends React.Component {
                                     </FormGroup>
                                 </div>}
                             </Form>
+                            </fieldset>
 
                         </div>
                     </ModalBody>
