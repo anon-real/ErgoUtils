@@ -39,7 +39,6 @@ export default class NewToken extends React.Component {
             description: "",
             name: "",
             tokenAmount: 10000,
-            toAddress: getWalletAddress(),
         };
 
         this.openModal = this.openModal.bind(this);
@@ -52,6 +51,12 @@ export default class NewToken extends React.Component {
     }
 
     componentWillUnmount() {
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({
+            toAddress: getWalletAddress()
+        })
     }
 
     openModal() {
