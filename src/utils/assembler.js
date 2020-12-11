@@ -20,6 +20,7 @@ import {
     sendTx, trueAddress,
 } from './explorer';
 import {decodeNum, decodeString, encodeHex, encodeNum} from './serializer';
+import moment from "moment";
 
 const url = 'http://95.217.50.117:8080/';
 
@@ -152,8 +153,6 @@ function retry(id) {
 export async function reqFollower() {
     let reqs = getForKey('reqs').filter(cur => cur.status === 'follow');
     let all = reqs.map((cur) => stat(cur.id));
-    console.log(reqs)
-    console.log(all)
     Promise.all(all).then((res) => {
         let newReqs = [];
         res.forEach((out) => {
@@ -164,12 +163,14 @@ export async function reqFollower() {
                         "Your request for " + req.operation + " is done by the assembler service!"
                     );
                     req.status = 'success'
-                    req.txId = out.tx.txId
+                    req.txId = out.tx.id
+                    let tx = out.tx
+                    if (!tx.creationTimestamp) tx.creationTimestamp = moment().unix()
                     addReq(out.tx, req.operation)
 
                 } else if (out.detail === 'returning') {
                     req.status = 'returning'
-                    req.txId = out.tx.txId
+                    req.txId = out.tx.id
                     showMsg(
                         'Your funds are being returned to you.',
                         false,

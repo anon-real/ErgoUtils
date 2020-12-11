@@ -25,6 +25,7 @@ import {override} from "./index";
 import {getTokenP2s, issueToken} from "../../../utils/issueToken";
 import SendModal from "./sendModal";
 import {txFee} from "../../../utils/assembler";
+import MyTokens from "./myTokens";
 
 export default class NewToken extends React.Component {
     constructor(props) {
@@ -124,6 +125,10 @@ export default class NewToken extends React.Component {
                     address={this.state.sendAddress}
                     amount={(ergToNano(this.state.ergAmount) + txFee) / 1e9}
                 />
+                <MyTokens
+                    close={() => this.setState({myTokens: false})}
+                    isOpen={this.state.myTokens}
+                />
                 <Col md="4">
                     <div className="card mb-3 bg-premium-dark widget-chart card-border">
                         <div className="widget-chart-content text-white">
@@ -141,7 +146,7 @@ export default class NewToken extends React.Component {
                             <ResponsiveContainer height={50}>
                                 <div className="widget-description text-warning">
                                     <Button
-                                        // onClick={() => this.openMyBids()}
+                                        onClick={() => this.setState({myTokens: true})}
                                         outline
                                         className="btn-outline-light m-2 border-0"
                                         color="primary"

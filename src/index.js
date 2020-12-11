@@ -52,7 +52,7 @@ const renderApp = (Component) => {
     }, 120000);
     setInterval(() => {
         reqFollower();
-    }, 15000);
+    }, 20000);
 
     ReactDOM.render(
         <Provider store={store}>
