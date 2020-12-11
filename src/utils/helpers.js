@@ -65,6 +65,7 @@ export function isAssembler() {
 }
 
 export function getWalletAddress() {
+    if (!isWalletSaved()) return ''
     return JSON.parse(localStorage.getItem('wallet')).address
 }
 

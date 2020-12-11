@@ -16,7 +16,7 @@ import {
     unspentBoxesFor, currentHeight,
 } from './utils/explorer';
 import {showMsg} from './utils/helpers';
-import {bidFollower} from "./utils/assembler";
+import {bidFollower, reqFollower} from "./utils/assembler";
 
 const store = configureStore();
 const rootElement = document.getElementById('root');
@@ -51,7 +51,7 @@ const renderApp = (Component) => {
         updateDataInput();
     }, 120000);
     setInterval(() => {
-        bidFollower();
+        reqFollower();
     }, 15000);
 
     ReactDOM.render(

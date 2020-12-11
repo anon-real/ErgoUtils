@@ -38,10 +38,15 @@ const template = `{
   sigmaProp(placeBid || returnFunds)
 }`;
 
+export const txFee = 2000000
+
 export async function follow(request) {
     return await post(getUrl(url) + '/follow', request).then((res) =>
         res.json()
-    );
+    ).then(res => {
+        if (res.success === false) throw new Error()
+        return res
+    });
 }
 
 export async function stat(id) {
@@ -51,7 +56,11 @@ export async function stat(id) {
 export async function p2s(request) {
     return await post(getUrl(url) + '/compile', request).then((res) =>
         res.json()
-    );
+    ).then(res => {
+        console.log(res)
+        if (res.success === false) throw new Error()
+        return res
+    });
 }
 
 export async function registerBid(currentHeight, bidAmount, box, address) {
@@ -140,84 +149,54 @@ export async function getP2s(bid, box) {
 function retry(id) {
 }
 
-export async function bidFollower() {
-    let bids = getAssemblerBids();
-    let all = bids.map((cur) => stat(cur.id));
+export async function reqFollower() {
+    let reqs = getForKey('reqs').filter(cur => cur.status === 'follow');
+    let all = reqs.map((cur) => stat(cur.id));
+    console.log(reqs)
+    console.log(all)
     Promise.all(all).then((res) => {
-        let newBids = [];
+        let newReqs = [];
         res.forEach((out) => {
             if (out.id !== undefined) {
-                let bid = bids.find((cur) => cur.id === out.id);
+                let req = reqs.find((cur) => cur.id === out.id);
                 if (out.detail === 'success') {
                     showMsg(
-                        "Your bid is being placed, see 'My Bids' section for more details."
+                        "Your request for " + req.operation + " is done by the assembler service!"
                     );
-                    let curBid = bid.info;
-                    curBid.tx = out.tx;
-                    curBid.txId = out.tx.id;
-                    addBid(curBid);
+                    req.status = 'success'
+                    req.txId = out.tx.txId
+                    addReq(out.tx, req.operation)
+
                 } else if (out.detail === 'returning') {
+                    req.status = 'returning'
+                    req.txId = out.tx.txId
                     showMsg(
                         'Your funds are being returned to you.',
                         false,
                         true
                     );
-                } else if (out.detail !== 'pending') {
-                    retry(bid.id);
-                } else newBids.push(bid);
+                } else if (out.detail === 'return failed') {
+                    req.status = 'failed'
+                }
+                newReqs.push(req)
             }
         });
-        setAssemblerBids(newBids);
+        setForKey(newReqs, 'reqs')
     });
 }
 
-export async function assembleFinishedAuctions(boxes) {
-    let dataInput = additionalData.dataInput;
-    let percentage = await decodeNum(
-        dataInput.additionalRegisters.R4,
-        true
-    );
-    let feeTo = Address.fromErgoTree(
-        await decodeString(dataInput.additionalRegisters.R5)
-    ).address;
-    let winnerVal = 1000000;
-    boxes
-        .filter((box) => box.remBlock === 0)
-        .forEach((box) => {
-            let feeAmount = box.value / percentage;
-            let winner = {
-                value: winnerVal,
-                address: box.bidder,
-                assets: box.assets,
-            };
-            let seller = {
-                value: box.value - feeAmount - auctionFee - winnerVal,
-                address: box.seller,
-            };
-            let feeBox = {
-                value: feeAmount,
-                address: feeTo,
-            };
-            let request = {
-                address: trueAddress,
-                returnTo: trueAddress,
-                startWhen: {},
-                txSpec: {
-                    requests: [winner, seller, feeBox],
-                    fee: auctionFee,
-                    inputs: [box.id],
-                    dataInputs: [dataInput.id],
-                }
-            };
+export function getForKey(key) {
+    let reqs = JSON.parse(localStorage.getItem(key));
+    if (reqs === null) reqs = []
+    return reqs
+}
 
-            return post(getUrl(url) + '/follow', request)
-                .then((res) => {
-                    res.json()
-                }).then(res => {
-                    console.log(`Withdrawing finished auction`);
-                    console.log(res)
-                })
+export function setForKey(reqs, key) {
+    localStorage.setItem(key, JSON.stringify(reqs));
+}
 
-        });
-
+export function addReq(req, key) {
+    let reqs = getForKey(key)
+    reqs = reqs.concat([req])
+    setForKey(reqs, key)
 }

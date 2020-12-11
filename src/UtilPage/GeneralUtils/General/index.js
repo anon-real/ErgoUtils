@@ -14,6 +14,7 @@ import NewToken from "./newToken";
 import ArtWorkNFT from "./artworkNFT";
 import MoreToCome from "./moreToCome";
 import {css} from "@emotion/core";
+import SendModal from "./sendModal";
 
 export const override = css`
     display: block;
