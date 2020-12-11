@@ -15,9 +15,9 @@ export function friendlyToken(token, quantity = true, length = 13) {
     return res
 }
 
-export function friendlyAddress(addr) {
+export function friendlyAddress(addr, length = 13) {
     if (addr === undefined || addr.slice === undefined) return ''
-    return addr.slice(0, 13) + '...' + addr.slice(-13);
+    return addr.slice(0, length) + '...' + addr.slice(-length);
 }
 
 export function getTxUrl(txId) {
@@ -53,7 +53,7 @@ export function showStickyMsg(message, isError = false) {
 }
 
 export function isWalletSaved() {
-    return sessionStorage.getItem('wallet') !== null;
+    return localStorage.getItem('wallet') !== null;
 }
 
 export function isWalletNode() {
@@ -65,11 +65,11 @@ export function isAssembler() {
 }
 
 export function getWalletAddress() {
-    return JSON.parse(sessionStorage.getItem('wallet')).address
+    return JSON.parse(localStorage.getItem('wallet')).address
 }
 
 export function getWalletType() {
-    return JSON.parse(sessionStorage.getItem('wallet')).type
+    return JSON.parse(localStorage.getItem('wallet')).type
 }
 
 export function getMyBids() {

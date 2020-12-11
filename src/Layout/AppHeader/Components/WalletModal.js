@@ -2,7 +2,14 @@ import React from 'react';
 import yoroiWallet from '../../../assets/images/yoroi-logo-shape-blue.inline.svg';
 import nodeWallet from '../../../assets/images/symbol_bold__1080px__black.svg';
 import { getAddress, getInfo } from '../../../utils/nodeWallet';
-import {isAddressValid, isWalletNode, showMsg} from '../../../utils/helpers';
+import {
+    friendlyAddress,
+    getWalletAddress,
+    isAddressValid,
+    isWalletNode,
+    isWalletSaved,
+    showMsg
+} from '../../../utils/helpers';
 
 import {
     Button,
@@ -34,16 +41,17 @@ class WalletModal extends React.Component {
         super(props);
 
         let type = 'assembler'
-        if (isWalletNode()) type = 'node'
-        let walletState = 'Configure';
-        if (sessionStorage.getItem('wallet') != null) walletState = 'Update';
+        let walletState = 'Configure Wallet';
+        let addr = ''
+
+        if (isWalletSaved()) {
+            addr = getWalletAddress()
+            walletState = friendlyAddress(addr, 6);
+        }
         this.state = {
             modal: false,
             activeTab: type,
-            userAddress: '',
-            processing: false,
-            nodeUrl: '',
-            apiKey: '',
+            userAddress: addr,
             walletState: walletState,
         };
 
@@ -58,8 +66,6 @@ class WalletModal extends React.Component {
         });
 
         let type = 'assembler'
-        if (isWalletNode()) type = 'node'
-
         this.setState({
             activeTab: type,
             processing: false,
@@ -81,7 +87,7 @@ class WalletModal extends React.Component {
             processing: true,
         });
         if (this.state.activeTab === 'assembler') {
-            sessionStorage.setItem(
+            localStorage.setItem(
                 'wallet',
                 JSON.stringify({
                     type: this.state.activeTab,
@@ -90,53 +96,13 @@ class WalletModal extends React.Component {
             );
             showMsg('Successfully configured the wallet.');
             this.toggle();
-            this.setState({ walletState: 'Update' });
-            return;
+            this.setState({ walletState: friendlyAddress(this.state.userAddress, 6) });
         }
-        getInfo(this.state.nodeUrl)
-            .then(() => {
-                getAddress(this.state.nodeUrl, this.state.apiKey)
-                    .then((res) => {
-                        if (res.error !== undefined) {
-                            showMsg(
-                                'Could not get wallet address. Your wallet is locked potentially.',
-                                true
-                            );
-                            return;
-                        }
-                        showMsg('Successfully configured the wallet.');
-                        sessionStorage.setItem(
-                            'wallet',
-                            JSON.stringify({
-                                type: this.state.activeTab,
-                                url: this.state.nodeUrl,
-                                apiKey: this.state.apiKey,
-                                address: res,
-                            })
-                        );
-                        this.setState({ walletState: 'Update' });
-                        this.toggle();
-                    })
-                    .catch((res) => {
-                        showMsg('Wrong API key.', true);
-                    });
-            })
-            .catch((err) => {
-                showMsg(
-                    'Could not connect to the node, please check the URL.',
-                    true
-                );
-            })
-            .finally(() => {
-                this.setState({
-                    processing: false,
-                });
-            });
     }
 
     clearWallet() {
-        sessionStorage.removeItem('wallet');
-        this.setState({ walletState: 'Configure' });
+        localStorage.removeItem('wallet');
+        this.setState({ walletState: 'Configure Wallet' });
         showMsg('Successfully cleared wallet info from local storage.');
         this.toggle();
     }
@@ -152,7 +118,7 @@ class WalletModal extends React.Component {
                     color="secondary"
                 >
                     <i className="nav-link-icon pe-7s-cash mr-2" />
-                    <span>{this.state.walletState} Wallet</span>
+                    <span>{this.state.walletState}</span>
                 </Button>
                 <Modal
                     isOpen={this.state.modal}
@@ -178,124 +144,30 @@ class WalletModal extends React.Component {
                             >
                                 <span>Any Wallet</span>
                             </Button>
-                            <Button
-                                outline
-                                className={
-                                    'btn-wide btn-pill ' +
-                                    classnames({
-                                        active: this.state.activeTab === 'node',
-                                    })
-                                }
-                                color="light"
-                                onClick={() => {
-                                    this.toggleTab('node');
-                                }}
-                            >
-                                <img
-                                    style={{ height: '20px', width: '20px' }}
-                                    src={nodeWallet}
-                                />
-                                <span className="ml-2">Node Wallet</span>
-                            </Button>
-                            <Button
-                                outline
-                                className={
-                                    'mr-2 ml-2 btn-wide btn-pill ' +
-                                    classnames({
-                                        active:
-                                            this.state.activeTab === 'yoroi',
-                                    })
-                                }
-                                color="light"
-                                onClick={() => {
-                                    this.toggleTab('yoroi');
-                                }}
-                            >
-                                <img
-                                    style={{ height: '20px', width: '20px' }}
-                                    src={yoroiWallet}
-                                />
-                                <span className="ml-2">Yoroi Wallet</span>
-                            </Button>
                         </div>
                     </ModalHeader>
                     <ModalBody>
                         <TabContent activeTab={this.state.activeTab}>
-                            <TabPane tabId="node">
-                                <Form>
-                                    <p>
-                                        This information will be saved locally
-                                        in the session storage of your browser
-                                        securely and will be used only with your
-                                        approval to place bids and start
-                                        auctions.
-                                    </p>
-                                    <p>
-                                        This information will be removed when
-                                        you close the application.
-                                    </p>
-                                    <FormGroup>
-                                        <Label for="nodeUrl">Node's URL</Label>
-                                        <Input
-                                            value={this.state.nodeUrl}
-                                            type="text"
-                                            name="nodeUrl"
-                                            id="nodeUrl"
-                                            onChange={(event) =>
-                                                this.setState({
-                                                    nodeUrl: event.target.value,
-                                                })
-                                            }
-                                            placeholder="like localhost:9053"
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="apiKey">API Key</Label>
-                                        <Input
-                                            value={this.state.apiKey}
-                                            type="text"
-                                            name="apiKey"
-                                            id="apiKey"
-                                            onChange={(event) =>
-                                                this.setState({
-                                                    apiKey: event.target.value,
-                                                })
-                                            }
-                                            placeholder="Your node's api key"
-                                        />
-                                    </FormGroup>
-                                </Form>
-                            </TabPane>
-                            <TabPane tabId="yoroi">
-                                <p>
-                                    Support for Yoroi will be added in the
-                                    future.
-                                </p>
-                            </TabPane>
                             <TabPane tabId="assembler">
                                 <p>
-                                    You can use any wallet to place bids by using the assembler service.
+                                    You can use any wallet using the assembler service.
                                 </p>
                                 <p>
                                     The assembler service is an intermediate
-                                    step which you can find out more about{' '}
+                                    step that you can find out more about{' '}
                                     <a
                                         target="_blank"
                                         href="https://www.ergoforum.org/t/tx-assembler-service-bypassing-node-requirement-for-dapps/443"
                                     >
                                         here
                                     </a>
-                                    . Your funds will be safe, find out more
-                                    about how{' '}
-                                    <a target="_blank" href="https://www.ergoforum.org/t/some-details-about-ergo-auction-house/428/6">
-                                        here
-                                    </a>
-                                    .
+                                    . Your funds will be safe using smart contracts that prevent the service from cheating!
                                 </p>
 
                                 <FormGroup>
                                     <Label for="apiKey">Address</Label>
                                     <Input
+                                        style={{fontSize: "12px"}}
                                         value={this.state.userAddress}
                                         type="text"
                                         name="address"
@@ -312,21 +184,15 @@ class WalletModal extends React.Component {
                                         Invalid ergo address.
                                     </FormFeedback>
                                     <FormText>
-                                        Your funds and winning tokens will be sent to this address. <b>Make sure your wallet can take care of tokens!</b>
+                                        Your assets will be sent back to this address in case of any failures.
                                     </FormText>
                                 </FormGroup>
                             </TabPane>
                         </TabContent>
                     </ModalBody>
                     <ModalFooter>
-                        <SyncLoader
-                            css={override}
-                            size={8}
-                            color={'#0b473e'}
-                            loading={this.state.processing}
-                        />
                         <Button
-                            disabled={this.state.walletState === 'Configure'}
+                            disabled={this.state.walletState === 'Configure Wallet'}
                             className="ml-5 mr-2 btn-transition"
                             color="secondary"
                             onClick={this.clearWallet}
@@ -344,9 +210,7 @@ class WalletModal extends React.Component {
                             className="mr-2 btn-transition"
                             color="secondary"
                             disabled={
-                                this.state.activeTab === 'yoroi' ||
-                                this.state.processing ||
-                                (this.state.activeTab === 'assembler' && !isAddressValid(this.state.userAddress))
+                                this.state.activeTab === 'assembler' && !isAddressValid(this.state.userAddress)
                             }
                             onClick={this.saveWallet}
                         >
