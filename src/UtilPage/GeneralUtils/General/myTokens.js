@@ -70,14 +70,14 @@ export default class MyTokens extends React.Component {
                             You have no issued tokens yet
                         </strong>
                     ) : (
-                        <Table striped className="mb-0">
+                        <Table striped className="mb-0 border-0">
                             <thead>
                             <tr>
-                                <th> Issuance Time</th>
-                                <th> Token ID</th>
-                                <th> Token Quantity</th>
-                                <th> ERG Value</th>
-                                <th> Issuance Transaction</th>
+                                <th className="border-top-0"> Issuance Time</th>
+                                <th className="border-top-0"> Token ID</th>
+                                <th className="border-top-0"> Token Quantity</th>
+                                <th className="border-top-0"> ERG Value</th>
+                                <th className="border-top-0"> Issuance Transaction</th>
                             </tr>
                             </thead>
                             <tbody>
