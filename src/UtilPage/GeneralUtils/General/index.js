@@ -13,6 +13,12 @@ import SyncLoader from "react-spinners/SyncLoader";
 import NewToken from "./newToken";
 import ArtWorkNFT from "./artworkNFT";
 import MoreToCome from "./moreToCome";
+import {css} from "@emotion/core";
+
+export const override = css`
+    display: block;
+    margin: 0 auto;
+`;
 
 export default class ActiveAuctions extends React.Component {
     constructor(props) {

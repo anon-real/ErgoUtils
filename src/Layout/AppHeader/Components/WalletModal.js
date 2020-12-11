@@ -1,7 +1,7 @@
 import React from 'react';
 import yoroiWallet from '../../../assets/images/yoroi-logo-shape-blue.inline.svg';
 import nodeWallet from '../../../assets/images/symbol_bold__1080px__black.svg';
-import { getAddress, getInfo } from '../../../utils/nodeWallet';
+import {getAddress, getInfo} from '../../../utils/nodeWallet';
 import {
     friendlyAddress,
     getWalletAddress,
@@ -28,8 +28,8 @@ import {
 } from 'reactstrap';
 import classnames from 'classnames';
 import SyncLoader from 'react-spinners/SyncLoader';
-import { css } from '@emotion/core';
-import { Address } from '@coinbarn/ergo-ts';
+import {css} from '@emotion/core';
+import {Address} from '@coinbarn/ergo-ts';
 
 const override = css`
     display: block;
@@ -96,13 +96,13 @@ class WalletModal extends React.Component {
             );
             showMsg('Successfully configured the wallet.');
             this.toggle();
-            this.setState({ walletState: friendlyAddress(this.state.userAddress, 6) });
+            this.setState({walletState: friendlyAddress(this.state.userAddress, 6)});
         }
     }
 
     clearWallet() {
         localStorage.removeItem('wallet');
-        this.setState({ walletState: 'Configure Wallet' });
+        this.setState({walletState: 'Configure Wallet'});
         showMsg('Successfully cleared wallet info from local storage.');
         this.toggle();
     }
@@ -117,7 +117,7 @@ class WalletModal extends React.Component {
                     className="mr-2 btn-transition"
                     color="secondary"
                 >
-                    <i className="nav-link-icon pe-7s-cash mr-2" />
+                    <i className="nav-link-icon pe-7s-cash mr-2"/>
                     <span>{this.state.walletState}</span>
                 </Button>
                 <Modal

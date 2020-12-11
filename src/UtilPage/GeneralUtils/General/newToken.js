@@ -1,45 +1,81 @@
 import React, {Fragment} from 'react';
-import cx from 'classnames';
-import TitleComponent2 from '../../../Layout/AppMain/PageTitleExamples/Variation2';
 import Col from "react-bootstrap/lib/Col";
 import ResponsiveContainer from "recharts/lib/component/ResponsiveContainer";
-import AreaChart from "recharts/lib/chart/AreaChart";
-import Area from "recharts/lib/cartesian/Area";
-import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     Button,
+    CustomInput,
     FormFeedback,
     FormText,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
+    Input, InputGroupAddon, InputGroupText,
+    Label,
     Modal,
     ModalBody,
+    ModalFooter,
     ModalHeader
 } from "reactstrap";
 import Row from "react-bootstrap/lib/Row";
-import SyncLoader from "react-spinners/SyncLoader";
+import BeatLoader from "react-spinners/BeatLoader";
 import ReactTooltip from "react-tooltip";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import InputGroup from "react-bootstrap/lib/InputGroup";
-// import Input from "reactstrap/src/Input";
-// import FormFeedback from "reactstrap/src/FormFeedback";
-// import FormText from "reactstrap/src/FormText";
+import {ergToNano, isFloat, isNatural} from "../../../utils/serializer";
+import {getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../../utils/helpers";
+import {Form} from "react-bootstrap";
+import {override} from "./index";
 
 export default class NewToken extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isOpen: false,
-            modalLoading: false
+            loading: false,
+            advanced: false,
+            ergAmount: "0.1",
+            decimals: 0,
+            tokenAmount: 10000,
+            toAddress: getWalletAddress(),
         };
+
+        this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.issue = this.issue.bind(this);
+        this.okToIssue = this.okToIssue.bind(this);
     }
 
     componentDidMount() {
     }
 
     componentWillUnmount() {
+    }
+
+    openModal() {
+        if (!isWalletSaved()) showMsg('Configure the wallet first', false, true)
+        else {
+            this.setState({isOpen: true})
+        }
+    }
+
+    closeModal() {
+        console.log("yea");
+        this.setState({
+            isOpen: false,
+            loading: false,
+            advanced: false,
+            ergAmount: "0.1",
+            decimals: 0,
+            tokenAmount: 10000,
+            toAddress: getWalletAddress(),
+        });
+    }
+
+    okToIssue() {
+        return isAddressValid(this.state.toAddress) &&
+            ergToNano(this.state.ergAmount) >= 100000000 &&
+            this.state.tokenAmount > 0 && !this.state.loading
+    }
+
+    issue() {
+        this.setState({loading: true})
     }
 
     render() {
@@ -71,7 +107,7 @@ export default class NewToken extends React.Component {
                                         <span>My Tokens</span>
                                     </Button>
                                     <Button
-                                        onClick={() => this.setState({isOpen: true})}
+                                        onClick={this.openModal}
                                         outline
                                         className="btn-outline-light m-2 border-0"
                                         color="primary"
@@ -88,7 +124,8 @@ export default class NewToken extends React.Component {
                 <Modal
                     size="md"
                     isOpen={this.state.isOpen}
-                    toggle={() => this.setState({isOpen: !this.state.isOpen})}
+                    backdrop="static"
+                    toggle={this.closeModal}
                 >
                     <ModalHeader toggle={this.props.close}>
                         <ReactTooltip/>
@@ -99,36 +136,178 @@ export default class NewToken extends React.Component {
                     <ModalBody>
                         <div>
                             <Row>
-                                <SyncLoader
-                                    // css={override}
+                                <BeatLoader
+                                    css={override}
                                     size={8}
                                     color={'#0b473e'}
-                                    loading={this.state.modalLoading}
+                                    loading={this.state.loading}
                                 />
                             </Row>
 
-                            <FormGroup>
-                                <InputGroup>
+                            <Form>
+                                <Row>
+                                    <Col md="6">
+                                        <FormGroup>
+                                            <Label for="tokenAmount">Quantity</Label>
+                                            <InputGroup>
+                                                <Input
+                                                    type="number"
+                                                    value={this.state.tokenAmount}
+                                                    invalid={this.state.tokenAmount <= 0 || !isNatural(this.state.tokenAmount)}
+                                                    onChange={(e) => {
+                                                        this.setState({tokenAmount: e.target.value})
+                                                    }}
+                                                    id="tokenAmount"
+                                                />
+                                                {/*<InputGroupAddon addonType="append">*/}
+                                                {/*    <InputGroupText>ERG</InputGroupText>*/}
+                                                {/*</InputGroupAddon>*/}
+                                                <FormFeedback invalid>
+                                                    must be a positive and natural
+                                                </FormFeedback>
+                                            </InputGroup>
+                                            <FormText>token quantity to be issued</FormText>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md="6">
+                                        <FormGroup>
+                                            <Label for="ergAmount">ERG Amount</Label>
+                                            <InputGroup>
+                                                <Input
+                                                    type="text"
+                                                    invalid={
+                                                        ergToNano(this.state.ergAmount) < 100000000
+                                                    }
+                                                    value={
+                                                        this.state.ergAmount
+                                                    }
+                                                    onChange={(e) => {
+                                                        if (isFloat(e.target.value)) {
+                                                            this.setState({
+                                                                ergAmount:
+                                                                e.target.value,
+                                                            });
+                                                        }
+                                                    }}
+                                                    id="ergAmount"
+                                                />
+                                                <InputGroupAddon addonType="append">
+                                                    <InputGroupText style={{backgroundColor: "white"}}>
+                                                        ERG
+                                                    </InputGroupText>
+                                                </InputGroupAddon>
+                                                <FormFeedback invalid>
+                                                    Must be at least 0.1 ERG
+                                                </FormFeedback>
+                                            </InputGroup>
+                                            <FormText>
+                                                amount of ERG to be sent with tokens
+                                            </FormText>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <FormGroup>
+                                    <Label for="toAddress">Address</Label>
                                     <Input
-                                        type="number"
-                                        value={this.state.tokenAmount}
-                                        invalid={this.state.tokenAmount <= 0}
+                                        style={{fontSize: "12px"}}
+                                        value={this.state.toAddress}
+                                        invalid={!isAddressValid(this.state.toAddress)}
                                         onChange={(e) => {
-                                            this.setState({tokenAmount: e.target.value})
+                                            this.setState({toAddress: e.target.value})
                                         }}
-                                        id="tokenAmount"
+                                        id="toAddress"
                                     />
-                                    {/*<InputGroupAddon addonType="append">*/}
-                                    {/*    <InputGroupText>ERG</InputGroupText>*/}
-                                    {/*</InputGroupAddon>*/}
                                     <FormFeedback invalid>
-                                        token amount must be a positive amount
+                                        Invalid ergo address.
                                     </FormFeedback>
-                                </InputGroup>
-                                <FormText>Token quantity to be issued</FormText>
-                            </FormGroup>
+                                    <FormText>issued tokens and ERG amount will be sent to this address</FormText>
+                                </FormGroup>
+
+                                <CustomInput
+                                    disabled={this.state.loading}
+                                    type="checkbox" id="advanced"
+                                    onChange={(e) => this.setState({advanced: e.target.checked})}
+                                    label="Advanced configuration"/>
+
+
+                                {this.state.advanced && <div>
+                                    <div className="divider text-muted bg-premium-dark opacity-1"/>
+                                    <p>You don't need to fill all fields, just fill ones you want.</p>
+                                    <Row>
+                                        <Col md="6">
+                                            <FormGroup>
+                                                {/*<Label for="tokenName">Token Name</Label>*/}
+                                                <InputGroup>
+                                                    <Input
+                                                        value={this.state.tokenName}
+                                                        onChange={(e) => {
+                                                            this.setState({tokenName: e.target.value})
+                                                        }}
+                                                        id="tokenName"
+                                                    />
+                                                </InputGroup>
+                                                <FormText>token verbose name</FormText>
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md="6">
+                                            <FormGroup>
+                                                {/*<Label for="decimals">Decimals</Label>*/}
+                                                <InputGroup>
+                                                    <Input
+                                                        type="number"
+                                                        value={this.state.decimals}
+                                                        defaultValue="0"
+                                                        invalid={this.state.decimals < 0 || !isNatural(this.state.decimals)}
+                                                        onChange={(e) => {
+                                                            this.setState({decimals: e.target.value})
+                                                        }}
+                                                        id="decimals"
+                                                    />
+                                                    <FormFeedback invalid>
+                                                        must be a whole non-negative
+                                                    </FormFeedback>
+                                                </InputGroup>
+                                                <FormText>number of decimals</FormText>
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+                                    <FormGroup>
+                                        {/*<Label for="description">Description</Label>*/}
+                                        <InputGroup>
+                                            <Input
+                                                type="textarea"
+                                                value={this.state.description}
+                                                onChange={(e) => {
+                                                    this.setState({description: e.target.value})
+                                                }}
+                                                id="description"
+                                            />
+                                        </InputGroup>
+                                        <FormText>token description</FormText>
+                                    </FormGroup>
+                                </div>}
+                            </Form>
+
                         </div>
                     </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            className="ml mr-2 btn-transition"
+                            color="secondary"
+                            onClick={this.closeModal}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            className="mr-2 btn-transition"
+                            color="secondary"
+                            disabled={!this.okToIssue()}
+                            // disabled={}
+                            onClick={this.issue}
+                        >
+                            Issue
+                        </Button>
+                    </ModalFooter>
                 </Modal>
             </Fragment>
         );

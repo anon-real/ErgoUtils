@@ -36,7 +36,7 @@ export function showMsg(message, isError = false, isWarning = false) {
         transition: Slide,
         closeButton: true,
         autoClose: 5000,
-        position: 'top-right',
+        position: 'top-center',
         type: status,
     });
 }
