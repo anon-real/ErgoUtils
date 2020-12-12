@@ -110,7 +110,7 @@ export default class NewToken extends React.Component {
                         this.setState({loading: false})
                     })
             }).catch(err => {
-            showMsg("Could contact the assembler service", true)
+            showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
         })
     }
