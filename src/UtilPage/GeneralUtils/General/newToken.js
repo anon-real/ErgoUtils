@@ -53,16 +53,13 @@ export default class NewToken extends React.Component {
     componentWillUnmount() {
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            toAddress: getWalletAddress()
-        })
-    }
-
     openModal() {
         if (!isWalletSaved()) showMsg('Configure the wallet first', false, true)
         else {
-            this.setState({isOpen: true})
+            this.setState({
+                toAddress: getWalletAddress(),
+                isOpen: true
+            })
         }
     }
 
@@ -177,7 +174,6 @@ export default class NewToken extends React.Component {
                 <Modal
                     size="md"
                     isOpen={this.state.isOpen}
-                    backdrop="static"
                     toggle={this.closeModal}
                 >
                     <ModalHeader toggle={this.props.close}>
@@ -274,7 +270,8 @@ export default class NewToken extends React.Component {
                                         <FormFeedback invalid>
                                             Invalid ergo address.
                                         </FormFeedback>
-                                        <FormText>issued tokens and ERG amount will be sent to this address, any P2S address works</FormText>
+                                        <FormText>issued tokens and ERG amount will be sent to this address, any P2S
+                                            address works</FormText>
                                     </FormGroup>
 
                                     <CustomInput

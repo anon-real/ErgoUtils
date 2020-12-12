@@ -32,7 +32,7 @@ export default class MoreToCome extends React.Component {
                                 More to Come
                             </div>
                             <div className="widget-subheading">
-                                Ergo Utils will add new features
+                                New features will be added to ErgoUtils soon
                             </div>
                             <ResponsiveContainer height={50}>
                                 <div className="widget-description text-warning">
