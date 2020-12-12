@@ -221,59 +221,53 @@ export default class NewToken extends React.Component {
                                         </Col>
                                         <Col md="6">
                                             <FormGroup>
-                                                <Label for="ergAmount">ERG Amount</Label>
+                                                <Label for="decimals">Decimals</Label>
                                                 <InputGroup>
                                                     <Input
-                                                        type="text"
-                                                        invalid={
-                                                            ergToNano(this.state.ergAmount) < 100000000
-                                                        }
-                                                        value={
-                                                            this.state.ergAmount
-                                                        }
+                                                        type="number"
+                                                        value={this.state.decimals}
+                                                        defaultValue="0"
+                                                        invalid={this.state.decimals < 0 || !isNatural(this.state.decimals)}
                                                         onChange={(e) => {
-                                                            if (isFloat(e.target.value)) {
-                                                                this.setState({
-                                                                    ergAmount:
-                                                                    e.target.value,
-                                                                });
-                                                            }
+                                                            this.setState({decimals: e.target.value})
                                                         }}
-                                                        id="ergAmount"
+                                                        id="decimals"
                                                     />
-                                                    <InputGroupAddon addonType="append">
-                                                        <InputGroupText style={{backgroundColor: "white"}}>
-                                                            ERG
-                                                        </InputGroupText>
-                                                    </InputGroupAddon>
                                                     <FormFeedback invalid>
-                                                        Must be at least 0.1 ERG
+                                                        must be a whole non-negative
                                                     </FormFeedback>
                                                 </InputGroup>
-                                                <FormText>
-                                                    amount of ERG to be sent with the issued tokens
-                                                </FormText>
+                                                <FormText>number of decimals</FormText>
                                             </FormGroup>
                                         </Col>
                                     </Row>
                                     <FormGroup>
-                                        <Label for="toAddress">Address</Label>
-                                        <Input
-                                            style={{fontSize: "12px"}}
-                                            value={this.state.toAddress}
-                                            invalid={!isAddressValid(this.state.toAddress)}
-                                            onChange={(e) => {
-                                                this.setState({toAddress: e.target.value})
-                                            }}
-                                            id="toAddress"
-                                        />
-                                        <FormFeedback invalid>
-                                            Invalid ergo address.
-                                        </FormFeedback>
-                                        <FormText>issued tokens and ERG amount will be sent to this address, any P2S
-                                            address works</FormText>
+                                        <Label for="tokenName">Token Name</Label>
+                                        <InputGroup>
+                                            <Input
+                                                value={this.state.tokenName}
+                                                onChange={(e) => {
+                                                    this.setState({tokenName: e.target.value})
+                                                }}
+                                                id="tokenName"
+                                            />
+                                        </InputGroup>
+                                        <FormText>token verbose name</FormText>
                                     </FormGroup>
-
+                                    <FormGroup>
+                                        <Label for="description">Description</Label>
+                                        <InputGroup>
+                                            <Input
+                                                type="textarea"
+                                                value={this.state.description}
+                                                onChange={(e) => {
+                                                    this.setState({description: e.target.value})
+                                                }}
+                                                id="description"
+                                            />
+                                        </InputGroup>
+                                        <FormText>token description</FormText>
+                                    </FormGroup>
                                     <CustomInput
                                         disabled={this.state.loading}
                                         type="checkbox" id="advanced"
@@ -283,58 +277,56 @@ export default class NewToken extends React.Component {
 
                                     {this.state.advanced && <div>
                                         <div className="divider text-muted bg-premium-dark opacity-1"/>
-                                        <p>You don't need to fill all fields, just fill ones you want.</p>
-                                        <Row>
-                                            <Col md="6">
-                                                <FormGroup>
-                                                    {/*<Label for="tokenName">Token Name</Label>*/}
-                                                    <InputGroup>
-                                                        <Input
-                                                            value={this.state.tokenName}
-                                                            onChange={(e) => {
-                                                                this.setState({tokenName: e.target.value})
-                                                            }}
-                                                            id="tokenName"
-                                                        />
-                                                    </InputGroup>
-                                                    <FormText>token verbose name</FormText>
-                                                </FormGroup>
-                                            </Col>
-                                            <Col md="6">
-                                                <FormGroup>
-                                                    {/*<Label for="decimals">Decimals</Label>*/}
-                                                    <InputGroup>
-                                                        <Input
-                                                            type="number"
-                                                            value={this.state.decimals}
-                                                            defaultValue="0"
-                                                            invalid={this.state.decimals < 0 || !isNatural(this.state.decimals)}
-                                                            onChange={(e) => {
-                                                                this.setState({decimals: e.target.value})
-                                                            }}
-                                                            id="decimals"
-                                                        />
-                                                        <FormFeedback invalid>
-                                                            must be a whole non-negative
-                                                        </FormFeedback>
-                                                    </InputGroup>
-                                                    <FormText>number of decimals</FormText>
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
                                         <FormGroup>
-                                            {/*<Label for="description">Description</Label>*/}
+                                            <Label for="ergAmount">ERG Amount</Label>
                                             <InputGroup>
                                                 <Input
-                                                    type="textarea"
-                                                    value={this.state.description}
+                                                    type="text"
+                                                    invalid={
+                                                        ergToNano(this.state.ergAmount) < 100000000
+                                                    }
+                                                    value={
+                                                        this.state.ergAmount
+                                                    }
                                                     onChange={(e) => {
-                                                        this.setState({description: e.target.value})
+                                                        if (isFloat(e.target.value)) {
+                                                            this.setState({
+                                                                ergAmount:
+                                                                e.target.value,
+                                                            });
+                                                        }
                                                     }}
-                                                    id="description"
+                                                    id="ergAmount"
                                                 />
+                                                <InputGroupAddon addonType="append">
+                                                    <InputGroupText style={{backgroundColor: "white"}}>
+                                                        ERG
+                                                    </InputGroupText>
+                                                </InputGroupAddon>
+                                                <FormFeedback invalid>
+                                                    Must be at least 0.1 ERG
+                                                </FormFeedback>
                                             </InputGroup>
-                                            <FormText>token description</FormText>
+                                            <FormText>
+                                                amount of ERG to be sent with the issued tokens
+                                            </FormText>
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="toAddress">Address</Label>
+                                            <Input
+                                                style={{fontSize: "12px"}}
+                                                value={this.state.toAddress}
+                                                invalid={!isAddressValid(this.state.toAddress)}
+                                                onChange={(e) => {
+                                                    this.setState({toAddress: e.target.value})
+                                                }}
+                                                id="toAddress"
+                                            />
+                                            <FormFeedback invalid>
+                                                Invalid ergo address.
+                                            </FormFeedback>
+                                            <FormText>issued tokens and ERG amount will be sent to this address, any P2S
+                                                address works</FormText>
                                         </FormGroup>
                                     </div>}
                                 </Form>
