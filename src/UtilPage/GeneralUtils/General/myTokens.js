@@ -33,7 +33,7 @@ export default class MyTokens extends React.Component {
             toUpdate = true
             return {
                 compressed: true,
-                txId: req.summary.id,
+                txId: req.id,
                 ergValue: req.outputs[0].value,
                 tokenId: req.outputs[0].assets[0].tokenId,
                 quantity: req.outputs[0].assets[0].amount,

@@ -166,7 +166,7 @@ export async function reqFollower() {
                     req.txId = out.tx.id
                     let tx = out.tx
                     if (!tx.creationTimestamp) tx.creationTimestamp = moment().unix()
-                    addReq(out.tx, req.operation)
+                    addReq(out.tx, req.key)
 
                 } else if (out.detail === 'returning') {
                     req.status = 'returning'
