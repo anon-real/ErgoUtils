@@ -1,28 +1,11 @@
-import {post, get} from './rest';
-import {
-    addAssemblerBid,
-    addBid,
-    getAssemblerBids,
-    getUrl,
-    getWalletAddress,
-    isAssembler,
-    isWalletNode,
-    setAssemblerBids,
-    showMsg, showStickyMsg,
-} from './helpers';
-import {Address, Transaction} from '@coinbarn/ergo-ts';
-import {
-    additionalData,
-    auctionFee,
-    auctionWithExtensionTree,
-    extendNum,
-    extendThreshold,
-    sendTx, trueAddress,
-} from './explorer';
-import {decodeNum, decodeString, encodeHex, encodeNum} from './serializer';
+import {get, post} from './rest';
+import {addAssemblerBid, getUrl, getWalletAddress, showStickyMsg,} from './helpers';
+import {Address} from '@coinbarn/ergo-ts';
+import {additionalData, auctionFee, auctionWithExtensionTree, extendNum, extendThreshold,} from './explorer';
+import {encodeHex, encodeNum} from './serializer';
 import moment from "moment";
 
-const url = 'http://95.217.50.117:8080/';
+const url = 'https://assembler.ergoauctions.org/';
 
 const template = `{
   val userAddress = PK("$userAddress")
