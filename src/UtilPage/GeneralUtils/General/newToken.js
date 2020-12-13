@@ -6,7 +6,9 @@ import {
     CustomInput,
     FormFeedback,
     FormText,
-    Input, InputGroupAddon, InputGroupText,
+    Input,
+    InputGroupAddon,
+    InputGroupText,
     Label,
     Modal,
     ModalBody,
@@ -71,7 +73,7 @@ export default class NewToken extends React.Component {
             ergAmount: "0.1",
             decimals: 0,
             description: "",
-            name: "",
+            tokenName: "",
             tokenAmount: 10000,
             toAddress: getWalletAddress(),
         });
@@ -312,7 +314,7 @@ export default class NewToken extends React.Component {
                                             </FormText>
                                         </FormGroup>
                                         <FormGroup>
-                                            <Label for="toAddress">Address</Label>
+                                            <Label for="toAddress">Send To</Label>
                                             <Input
                                                 style={{fontSize: "12px"}}
                                                 value={this.state.toAddress}

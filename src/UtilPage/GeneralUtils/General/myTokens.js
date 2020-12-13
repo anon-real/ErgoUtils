@@ -82,7 +82,6 @@ export default class MyTokens extends React.Component {
                             </thead>
                             <tbody>
                             {this.state.tokens.map((req) => {
-                                console.log(req)
                                 let time = moment(req.timestamp).format('lll');
                                 return (
                                     <tr>

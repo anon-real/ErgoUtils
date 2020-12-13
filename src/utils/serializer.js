@@ -13,6 +13,7 @@ export async function encodeNum(n, isInt = false) {
 export async function decodeNum(n, isInt = false) {
     if (isInt) return (await ergolib).Constant.decode_from_base16(n).to_i32()
     else return (await ergolib).Constant.decode_from_base16(n).to_i64().to_str()
+
 }
 
 export async function encodeHex(reg) {
