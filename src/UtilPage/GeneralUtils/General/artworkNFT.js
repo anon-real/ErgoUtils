@@ -31,6 +31,7 @@ import MyTokens from "./myTokens";
 import {sha256} from "js-sha256";
 import {geArtworkP2s, issueArtworkNFT, issueNFT} from "../../../utils/issueArtwork";
 import MyArtworks from "./myArtworks";
+import Clipboard from "react-clipboard.js";
 
 export default class ArtWorkNFT extends React.Component {
     constructor(props) {
@@ -238,19 +239,23 @@ export default class ArtWorkNFT extends React.Component {
                                     </FormGroup>
                                     <FormGroup>
                                         <Label for="exampleFile">Artwork File</Label>
-                                        <Row>
-                                            <Col md="6">
-                                                <Input onChange={this.hashFile} type="file" name="file"
-                                                       id="exampleFile"/>
-                                            </Col>
-                                            <Col md="6">
-                                                {this.state.checksum &&
-                                                <p>checksum <b>{friendlyAddress(this.state.checksum, 5)}</b></p>}
-                                            </Col>
-                                        </Row>
+                                        <Input onChange={this.hashFile} type="file" name="file"
+                                               id="exampleFile"/>
                                         <FormText color="muted">
                                             will be only used to calculate the checksum of your artwork locally
                                         </FormText>
+                                        {this.state.checksum &&
+                                        <p>checksum <Clipboard
+                                                component="b"
+                                                data-clipboard-text={
+                                                    this.state.checksum
+                                                }
+                                                onSuccess={() => showMsg('Copied!')}
+                                            >
+                                                {friendlyAddress(this.state.checksum, 5)}
+                                            </Clipboard>{' '}
+
+                                            </p>}
                                     </FormGroup>
 
                                     <CustomInput
