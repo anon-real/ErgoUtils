@@ -39,7 +39,7 @@ export default class NewToken extends React.Component {
             ergAmount: "0.1",
             decimals: 0,
             description: "",
-            name: "",
+            tokenName: "",
             tokenAmount: 10000,
         };
 
@@ -89,14 +89,9 @@ export default class NewToken extends React.Component {
         this.setState({loading: true})
         getTokenP2s(this.state.toAddress, this.state.tokenAmount, ergToNano(this.state.ergAmount))
             .then(res => {
-                let decimals = 0
-                let description = ""
-                let tokenName = ""
-                if (this.state.advanced) {
-                    decimals = parseInt(this.state.decimals)
-                    description = this.state.description
-                    tokenName = this.state.tokenName
-                }
+                let decimals = parseInt(this.state.decimals)
+                let description = this.state.description
+                let tokenName = this.state.tokenName
                 issueToken(this.state.tokenAmount, ergToNano(this.state.ergAmount), this.state.toAddress,
                     tokenName, description, decimals, res.address)
                     .then(regRes => {

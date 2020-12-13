@@ -29,6 +29,8 @@ import SendModal from "./sendModal";
 import {txFee} from "../../../utils/assembler";
 import MyTokens from "./myTokens";
 import {sha256} from "js-sha256";
+import {geArtworkP2s, issueArtworkNFT, issueNFT} from "../../../utils/issueArtwork";
+import MyArtworks from "./myArtworks";
 
 export default class ArtWorkNFT extends React.Component {
     constructor(props) {
@@ -76,10 +78,35 @@ export default class ArtWorkNFT extends React.Component {
     }
 
     okToIssue() {
-        return false
+        return isAddressValid(this.state.toAddress) &&
+            ergToNano(this.state.ergAmount) >= 100000000 &&
+            !this.state.loading && this.state.checksum !== null
     }
 
     issue() {
+        this.setState({loading: true})
+        geArtworkP2s(this.state.toAddress, ergToNano(this.state.ergAmount), this.state.checksum)
+            .then(res => {
+                let description = this.state.description
+                let tokenName = this.state.tokenName
+                issueArtworkNFT(ergToNano(this.state.ergAmount), this.state.toAddress,
+                    tokenName, description, res.address, this.state.checksum)
+                    .then(regRes => {
+                        this.setState({
+                            sendAddress: res.address,
+                            sendModal: true,
+                        })
+
+                    }).catch(err => {
+                    showMsg("Could not register request to the assembler", true)
+                })
+                    .finally(() => {
+                        this.setState({loading: false})
+                    })
+            }).catch(err => {
+            showMsg("Could not contact the assembler service", true)
+            this.setState({loading: false})
+        })
 
     }
 
@@ -96,7 +123,7 @@ export default class ArtWorkNFT extends React.Component {
         let file = event.target.files[0]
         let reader = new FileReader()
         let setCS = this.setFileChecksum
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             let checksum = sha256(e.target.result)
             setCS(checksum)
         }
@@ -115,10 +142,10 @@ export default class ArtWorkNFT extends React.Component {
                     address={this.state.sendAddress}
                     amount={(ergToNano(this.state.ergAmount) + txFee) / 1e9}
                 />
-                {/*<MyTokens*/}
-                {/*    close={() => this.setState({myTokens: false})}*/}
-                {/*    isOpen={this.state.myTokens}*/}
-                {/*/>*/}
+                <MyArtworks
+                    close={() => this.setState({myArtworks: false})}
+                    isOpen={this.state.myArtworks}
+                />
                 <Col md="4">
                     <div className="card mb-3 bg-premium-dark widget-chart card-border">
                         <div className="widget-chart-content text-white">
@@ -135,7 +162,7 @@ export default class ArtWorkNFT extends React.Component {
                             <ResponsiveContainer height={50}>
                                 <div className="widget-description text-warning">
                                     <Button
-                                        // onClick={() => this.openMyBids()}
+                                        onClick={() => this.setState({myArtworks: true})}
                                         outline
                                         className="btn-outline-light m-2 border-0"
                                         color="primary"
@@ -206,16 +233,19 @@ export default class ArtWorkNFT extends React.Component {
                                                 id="description"
                                             />
                                         </InputGroup>
-                                        <FormText>description of your artwork; anything to represent it to others, e.g. link to the artwork</FormText>
+                                        <FormText>description of your artwork; anything to represent it to others, e.g.
+                                            link to the artwork</FormText>
                                     </FormGroup>
                                     <FormGroup>
                                         <Label for="exampleFile">Artwork File</Label>
                                         <Row>
                                             <Col md="6">
-                                                <Input onChange={this.hashFile} type="file" name="file" id="exampleFile"/>
+                                                <Input onChange={this.hashFile} type="file" name="file"
+                                                       id="exampleFile"/>
                                             </Col>
                                             <Col md="6">
-                                                {this.state.checksum && <p>checksum <b>{friendlyAddress(this.state.checksum, 5)}</b></p>}
+                                                {this.state.checksum &&
+                                                <p>checksum <b>{friendlyAddress(this.state.checksum, 5)}</b></p>}
                                             </Col>
                                         </Row>
                                         <FormText color="muted">

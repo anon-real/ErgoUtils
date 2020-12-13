@@ -8,7 +8,7 @@ import {
     isAssembler,
     isWalletNode,
     setAssemblerBids,
-    showMsg,
+    showMsg, showStickyMsg,
 } from './helpers';
 import {Address, Transaction} from '@coinbarn/ergo-ts';
 import {
@@ -159,7 +159,7 @@ export async function reqFollower() {
             if (out.id !== undefined) {
                 let req = reqs.find((cur) => cur.id === out.id);
                 if (out.detail === 'success') {
-                    showMsg(
+                    showStickyMsg(
                         "Your request for " + req.operation + " is done by the assembler service!"
                     );
                     req.status = 'success'
@@ -171,7 +171,7 @@ export async function reqFollower() {
                 } else if (out.detail === 'returning') {
                     req.status = 'returning'
                     req.txId = out.tx.id
-                    showMsg(
+                    showStickyMsg(
                         'Your funds are being returned to you.',
                         false,
                         true
