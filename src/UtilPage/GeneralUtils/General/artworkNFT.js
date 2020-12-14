@@ -57,7 +57,10 @@ export default class ArtWorkNFT extends React.Component {
     }
 
     openModal() {
-        if (!isWalletSaved()) showMsg('Configure the wallet first', false, true)
+        if (!isWalletSaved()) {
+            showMsg('Configure the wallet first', false, true)
+            return
+        }
         this.setState({
             toAddress: getWalletAddress(),
             isOpen: true,
