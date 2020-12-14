@@ -78,6 +78,7 @@ export default class ArtWorkNFT extends React.Component {
             decimals: 0,
             description: "",
             tokenName: "",
+            advanced: false,
         })
     }
 

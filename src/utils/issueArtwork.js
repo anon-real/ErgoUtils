@@ -22,7 +22,7 @@ const template = `{
   sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
 }`;
 
-const assetType = 'Artwork NFT'
+const assetType = '0101'
 
 export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash) {
     let ourAddr = getWalletAddress();
