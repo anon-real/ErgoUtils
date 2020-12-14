@@ -5,7 +5,7 @@ import {additionalData, auctionFee, auctionWithExtensionTree, extendNum, extendT
 import {encodeHex, encodeNum} from './serializer';
 import moment from "moment";
 
-const url = 'https://assembler.ergoauctions.org/';
+const url = 'https://assembler.ergoutils.org/';
 
 const template = `{
   val userAddress = PK("$userAddress")
