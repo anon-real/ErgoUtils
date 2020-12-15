@@ -5,8 +5,8 @@ import {addReq, follow, p2s, txFee} from "./assembler";
 const template = `{
   val outputOk = {
     val issued = OUTPUTS(0).tokens.getOrElse(0, (INPUTS(0).id, 0L))
-    INPUTS(0).id == issued._1 && issued._2 == $amount &&
-      OUTPUTS(0).value == $ergAmount &&
+    INPUTS(0).id == issued._1 && issued._2 == $amountL &&
+      OUTPUTS(0).value == $ergAmountL &&
       OUTPUTS(0).propositionBytes == fromBase64("$toAddress")
   }
   val returnFunds = {
