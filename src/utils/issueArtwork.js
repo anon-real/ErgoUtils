@@ -24,7 +24,7 @@ const template = `{
 
 const assetType = '0101'
 
-export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash) {
+export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, url = null) {
     let ourAddr = getWalletAddress();
 
     let outBox = {
@@ -39,6 +39,8 @@ export async function issueArtworkNFT(ergAmount, toAddress, name, description, a
             R8: await encodeHex(artHash),
         }
     };
+
+    if (url) outBox.registers.R9 = await encodeHex(Serializer.stringToHex(url))
 
     let request = {
         address: address,
@@ -87,3 +89,15 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash) {
     return p2s(script);
 }
 
+export async function uploadArtwork(file, upload) {
+    if (upload) {
+        let form = new FormData();
+        form.append("image", file)
+        return fetch("https://api.imgbb.com/1/upload?key=951beda2107cac29c2409c886d4a192b", {
+            method: 'POST',
+            mode: 'cors',
+            body: form,
+        }).then(res => res.json())
+            .then(res => res.data.url)
+    } else return null
+}

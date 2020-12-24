@@ -29,7 +29,7 @@ import SendModal from "./sendModal";
 import {txFee} from "../../../utils/assembler";
 import MyTokens from "./myTokens";
 import {sha256} from "js-sha256";
-import {geArtworkP2s, issueArtworkNFT, issueNFT} from "../../../utils/issueArtwork";
+import {geArtworkP2s, issueArtworkNFT, issueNFT, uploadArtwork} from "../../../utils/issueArtwork";
 import MyArtworks from "./myArtworks";
 import Clipboard from "react-clipboard.js";
 
@@ -79,6 +79,8 @@ export default class ArtWorkNFT extends React.Component {
             description: "",
             tokenName: "",
             advanced: false,
+            upload: false,
+            file: null
         })
     }
 
@@ -92,22 +94,24 @@ export default class ArtWorkNFT extends React.Component {
         this.setState({loading: true})
         geArtworkP2s(this.state.toAddress, ergToNano(this.state.ergAmount), this.state.checksum)
             .then(res => {
-                let description = this.state.description
-                let tokenName = this.state.tokenName
-                issueArtworkNFT(ergToNano(this.state.ergAmount), this.state.toAddress,
-                    tokenName, description, res.address, this.state.checksum)
-                    .then(regRes => {
-                        this.setState({
-                            sendAddress: res.address,
-                            sendModal: true,
-                        })
+                uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
+                    let description = this.state.description
+                    let tokenName = this.state.tokenName
+                    issueArtworkNFT(ergToNano(this.state.ergAmount), this.state.toAddress,
+                        tokenName, description, res.address, this.state.checksum, uploadRes)
+                        .then(regRes => {
+                            this.setState({
+                                sendAddress: res.address,
+                                sendModal: true,
+                            })
 
-                    }).catch(err => {
-                    showMsg("Could not register request to the assembler", true)
-                })
-                    .finally(() => {
-                        this.setState({loading: false})
+                        }).catch(err => {
+                        showMsg("Could not register request to the assembler", true)
                     })
+                        .finally(() => {
+                            this.setState({loading: false})
+                        })
+                })
             }).catch(err => {
             showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
@@ -115,8 +119,8 @@ export default class ArtWorkNFT extends React.Component {
 
     }
 
-    setFileChecksum(checksum) {
-        this.setState({loading: false, checksum: checksum})
+    setFileChecksum(checksum, file) {
+        this.setState({loading: false, checksum: checksum, file: file})
     }
 
     hashFile(event) {
@@ -130,9 +134,10 @@ export default class ArtWorkNFT extends React.Component {
         let setCS = this.setFileChecksum
         reader.onload = function (e) {
             let checksum = sha256(e.target.result)
-            setCS(checksum)
+            setCS(checksum, file)
         }
         reader.readAsArrayBuffer(file)
+
     }
 
     render() {
@@ -241,26 +246,45 @@ export default class ArtWorkNFT extends React.Component {
                                         <FormText>description of your artwork; anything to represent it to others, e.g.
                                             link to the artwork</FormText>
                                     </FormGroup>
-                                    <FormGroup>
-                                        <Label for="exampleFile">Artwork File</Label>
-                                        <Input onChange={this.hashFile} type="file" name="file"
-                                               id="exampleFile"/>
-                                        <FormText color="muted">
-                                            will be only used to calculate the checksum of your artwork locally
-                                        </FormText>
-                                        {this.state.checksum &&
-                                        <p>checksum <Clipboard
-                                                component="b"
-                                                data-clipboard-text={
-                                                    this.state.checksum
-                                                }
-                                                onSuccess={() => showMsg('Copied!')}
-                                            >
-                                                {friendlyAddress(this.state.checksum, 5)}
-                                            </Clipboard>{' '}
+                                    <Row>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <Label for="exampleFile">Artwork File</Label>
+                                                <Input onChange={this.hashFile} type="file" name="file"
+                                                       style={{overflowY: 'hidden'}}
+                                                       id="exampleFile"/>
+                                                <FormText color="muted">
+                                                    will be only used to calculate the checksum of your artwork locally
+                                                </FormText>
+                                                {this.state.checksum &&
+                                                <p>checksum <Clipboard
+                                                    component="b"
+                                                    data-clipboard-text={
+                                                        this.state.checksum
+                                                    }
+                                                    onSuccess={() => showMsg('Copied!')}
+                                                >
+                                                    {friendlyAddress(this.state.checksum, 5)}
+                                                </Clipboard>{' '}
 
-                                            </p>}
-                                    </FormGroup>
+                                                </p>}
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <CustomInput
+                                                    type="checkbox" id="upload"
+                                                    onChange={(e) => this.setState({upload: e.target.checked})}
+                                                    label="Upload Artwork"/>
+                                                <FormText color="muted">
+                                                    If enabled, the artwork will be uploaded to imgbb.com; useful for
+                                                    presenting artwork in auctioning.
+                                                    <br/>
+                                                    The size must be less than 32 MB
+                                                </FormText>
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
 
                                     <CustomInput
                                         disabled={this.state.loading}
