@@ -70,10 +70,10 @@ export default class MyAddrAirdrops extends React.Component {
                         <Table striped className="mb-0 border-0">
                             <thead>
                             <tr>
-                                <th className="border-top-0"> Issuance Time</th>
+                                <th className="border-top-0"> Airdrop Time</th>
                                 <th className="border-top-0"> ERG Value</th>
                                 <th className="border-top-0"> Airdrop List</th>
-                                <th className="border-top-0"> Issuance Transaction</th>
+                                <th className="border-top-0"> Airdrop Transaction</th>
                             </tr>
                             </thead>
                             <tbody>
