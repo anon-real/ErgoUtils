@@ -53,7 +53,8 @@ class DonationModal extends React.Component {
                                 }
                                 onSuccess={() => showMsg('Copied!')}
                             >
-                                {friendlyAddress('9ho3quMB1Vs6ejycB4t3tNw5oTkiu2ZSGT9VfBFshxb21baT3ex')}
+                                <br/>
+                                9ho3quMB1Vs6ejycB4t3tNw5oTkiu2ZSGT9VfBFshxb21baT3ex
                             </Clipboard>
                             </p>
                         </Container>
