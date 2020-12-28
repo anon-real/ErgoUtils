@@ -31,7 +31,7 @@ const template = `{
 }`;
 
 export function addrAirdropFee(outLen) {
-    return Math.ceil(outLen / 10) * 2000000
+    return Math.ceil(outLen / 20) * 2000000
 }
 
 export async function startAddrAirdrop(address, addrList, ergAmount, tokenId, tokenAmount, includingFee) {
