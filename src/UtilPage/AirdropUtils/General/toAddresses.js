@@ -238,37 +238,36 @@ export default class ToAddresses extends React.Component {
                             </Row>
 
                             <fieldset disabled={this.state.loading}>
-                                <Form>
-                                    <Row>
-                                        <Col md='8'>
-                                            <FormGroup>
-                                                <Input
-                                                    value={this.state.selected}
-                                                    onChange={(event) => {
-                                                        this.setState({
-                                                            selected: event.target.value
-                                                        });
-                                                    }}
-                                                    type="select"
-                                                    id="selected"
-                                                    invalid={!this.state.selected}
-                                                >
-                                                    {this.state.addrList.map(
-                                                        (item) => {
-                                                            return <option>{item.name}</option>;
-                                                        }
-                                                    )}
-                                                </Input>
-                                                <FormFeedback invalid>
-                                                    No address list, please add one first with 'Add' button
-                                                </FormFeedback>
-                                                <FormText>
-                                                    Will airdrop equally to addresses in the list
-                                                </FormText>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='4'
-                                        >
+                                <Row>
+                                    <Col md='8'>
+                                        <FormGroup>
+                                            <Input
+                                                value={this.state.selected}
+                                                onChange={(event) => {
+                                                    this.setState({
+                                                        selected: event.target.value
+                                                    });
+                                                }}
+                                                type="select"
+                                                id="selected"
+                                                invalid={!this.state.selected}
+                                            >
+                                                {this.state.addrList.map(
+                                                    (item) => {
+                                                        return <option>{item.name}</option>;
+                                                    }
+                                                )}
+                                            </Input>
+                                            <FormFeedback invalid>
+                                                No address list, please add one first with 'Add' button
+                                            </FormFeedback>
+                                            <FormText>
+                                                Will airdrop equally to addresses in the list
+                                            </FormText>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md='4'
+                                    >
                                             <span
                                                 data-tip='View and edit the selected list'
                                             >
@@ -279,120 +278,119 @@ export default class ToAddresses extends React.Component {
                                                 className="pe-7s-edit font-size-lg btn-icon-wrapper"> </i></button>
 
                                             </span>
-                                            <button
-                                                onClick={() => this.openListModal(true)}
-                                                data-tip='Add a new address list'
-                                                className="mr-2 btn-icon btn-icon-only btn btn-outline-dark"><i
-                                                className="pe-7s-plus font-size-lg btn-icon-wrapper"> </i></button>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md='8'>
-                                            <FormGroup>
-                                                <InputGroup>
-                                                    <InputGroupAddon addonType="prepend">
-                                                        <InputGroupText style={{backgroundColor: "white"}}>
-                                                            <Label check>
-                                                                <Input
-                                                                    checked={
-                                                                        this.state.includingFee
-                                                                    }
-                                                                    onChange={(e) =>
-                                                                        this.setState(
-                                                                            {
-                                                                                includingFee: e.target.checked,
-                                                                            }
-                                                                        )
-                                                                    }
-                                                                    className="mr-2"
-                                                                    addon
-                                                                    type="checkbox"
-                                                                    aria-label="Checkbox for following text input"
-                                                                />
-                                                                Including Fee
-                                                            </Label>
-                                                        </InputGroupText>
-                                                    </InputGroupAddon>
-                                                    <Input
-                                                        type="text"
-                                                        invalid={
-                                                            ergToNano(this.state.distErg) < 100000000
-                                                        }
-                                                        value={
-                                                            this.state.distErg
-                                                        }
-                                                        onChange={(e) => {
-                                                            if (isFloat(e.target.value)) {
-                                                                this.setState({
-                                                                    distErg:
-                                                                    e.target.value,
-                                                                });
-                                                            }
-                                                        }}
-                                                        id="ergAmount"
-                                                    />
-                                                    <InputGroupAddon addonType="append">
-                                                        <InputGroupText style={{backgroundColor: "white"}}>
-                                                            ERG
-                                                        </InputGroupText>
-                                                    </InputGroupAddon>
-                                                    <FormFeedback invalid>
-                                                        Must be at least 0.1 ERG
-                                                    </FormFeedback>
-                                                </InputGroup>
-                                                <FormText>
-                                                    ERG amount to be distributed; the "Including Fee" option is useful
-                                                    if
-                                                    sending via mixer
-                                                </FormText>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='4'>
-                                            <FormGroup>
-                                                <CustomInput
-                                                    type="checkbox"
-                                                    id="upload"
-                                                    onChange={(e) => this.setState({withToken: e.target.checked})}
-                                                    label="Include Token"/>
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    {this.state.withToken && <Row>
-                                        <Col md='8'>
-                                            <FormGroup>
+                                        <button
+                                            onClick={() => this.openListModal(true)}
+                                            data-tip='Add a new address list'
+                                            className="mr-2 btn-icon btn-icon-only btn btn-outline-dark"><i
+                                            className="pe-7s-plus font-size-lg btn-icon-wrapper"> </i></button>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md='8'>
+                                        <FormGroup>
+                                            <InputGroup>
+                                                <InputGroupAddon addonType="prepend">
+                                                    <InputGroupText style={{backgroundColor: "white"}}>
+                                                        <Label check>
+                                                            <Input
+                                                                checked={
+                                                                    this.state.includingFee
+                                                                }
+                                                                onChange={(e) =>
+                                                                    this.setState(
+                                                                        {
+                                                                            includingFee: e.target.checked,
+                                                                        }
+                                                                    )
+                                                                }
+                                                                className="mr-2"
+                                                                addon
+                                                                type="checkbox"
+                                                                aria-label="Checkbox for following text input"
+                                                            />
+                                                            Including Fee
+                                                        </Label>
+                                                    </InputGroupText>
+                                                </InputGroupAddon>
                                                 <Input
-                                                    value={this.state.tokenId}
-                                                    style={{fontSize: "11px"}}
-                                                    onChange={(event) => {
-                                                        this.setState({
-                                                            tokenId: event.target.value
-                                                        });
-                                                    }}
                                                     type="text"
-                                                    id="tokenId"
+                                                    invalid={
+                                                        ergToNano(this.state.distErg) < 100000000
+                                                    }
+                                                    value={
+                                                        this.state.distErg
+                                                    }
+                                                    onChange={(e) => {
+                                                        if (isFloat(e.target.value)) {
+                                                            this.setState({
+                                                                distErg:
+                                                                e.target.value,
+                                                            });
+                                                        }
+                                                    }}
+                                                    id="ergAmount"
                                                 />
-                                                <FormText>
-                                                    Token ID
-                                                </FormText>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='4'>
+                                                <InputGroupAddon addonType="append">
+                                                    <InputGroupText style={{backgroundColor: "white"}}>
+                                                        ERG
+                                                    </InputGroupText>
+                                                </InputGroupAddon>
+                                                <FormFeedback invalid>
+                                                    Must be at least 0.1 ERG
+                                                </FormFeedback>
+                                            </InputGroup>
+                                            <FormText>
+                                                ERG amount to be distributed; the "Including Fee" option is useful
+                                                if
+                                                sending via mixer
+                                            </FormText>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md='4'>
+                                        <FormGroup>
+                                            <CustomInput
+                                                type="checkbox"
+                                                id="upload"
+                                                onChange={(e) => this.setState({withToken: e.target.checked})}
+                                                label="Include Token"/>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                {this.state.withToken && <Row>
+                                    <Col md='8'>
+                                        <FormGroup>
                                             <Input
-                                                value={this.state.tokenQuantity}
+                                                value={this.state.tokenId}
+                                                style={{fontSize: "11px"}}
                                                 onChange={(event) => {
                                                     this.setState({
-                                                        tokenQuantity: event.target.value
+                                                        tokenId: event.target.value
                                                     });
                                                 }}
-                                                type="number"
-                                                id="tokenQuantity"
+                                                type="text"
+                                                id="tokenId"
                                             />
                                             <FormText>
-                                                Token quantity
+                                                Token ID
                                             </FormText>
-                                        </Col>
-                                    </Row>}
-                                </Form>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md='4'>
+                                        <Input
+                                            value={this.state.tokenQuantity}
+                                            onChange={(event) => {
+                                                this.setState({
+                                                    tokenQuantity: event.target.value
+                                                });
+                                            }}
+                                            type="number"
+                                            id="tokenQuantity"
+                                        />
+                                        <FormText>
+                                            Token quantity
+                                        </FormText>
+                                    </Col>
+                                </Row>}
                             </fieldset>
 
                         </div>
