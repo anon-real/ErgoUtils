@@ -1,19 +1,8 @@
 import React from 'react';
-import yoroiWallet from '../../../assets/images/yoroi-logo-shape-blue.inline.svg';
-import nodeWallet from '../../../assets/images/symbol_bold__1080px__black.svg';
-import {getAddress, getInfo} from '../../../utils/nodeWallet';
-import {
-    friendlyAddress,
-    getWalletAddress,
-    isAddressValid,
-    isWalletNode,
-    isWalletSaved,
-    showMsg
-} from '../../../utils/helpers';
+import {friendlyAddress, getWalletAddress, isAddressValid, isWalletSaved, showMsg} from '../../../utils/helpers';
 
 import {
     Button,
-    Form,
     FormFeedback,
     FormGroup,
     FormText,
@@ -27,9 +16,7 @@ import {
     TabPane,
 } from 'reactstrap';
 import classnames from 'classnames';
-import SyncLoader from 'react-spinners/SyncLoader';
 import {css} from '@emotion/core';
-import {Address} from '@coinbarn/ergo-ts';
 
 const override = css`
     display: block;

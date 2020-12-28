@@ -25,7 +25,7 @@ import {getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../..
 import {Form} from "react-bootstrap";
 import {override} from "./index";
 import {getTokenP2s, issueToken} from "../../../utils/issueToken";
-import SendModal from "./sendModal";
+import SendModal from "../../Common/sendModal";
 import {txFee} from "../../../utils/assembler";
 import MyTokens from "./myTokens";
 

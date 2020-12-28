@@ -5,6 +5,7 @@ import {Address} from "@coinbarn/ergo-ts";
 const explorerUrl = 'https://explorer.ergoplatform.com/en/';
 
 export function friendlyToken(token, quantity = true, length = 13) {
+    if (!token) return ''
     let res = '';
     if (quantity) res = token.amount + ' of ';
     res +=
@@ -56,10 +57,6 @@ export function isWalletSaved() {
     return localStorage.getItem('wallet') !== null;
 }
 
-export function isWalletNode() {
-    return isWalletSaved() && getWalletType() === 'node';
-}
-
 export function isAssembler() {
     return isWalletSaved() && getWalletType() === 'assembler';
 }
@@ -71,38 +68,6 @@ export function getWalletAddress() {
 
 export function getWalletType() {
     return JSON.parse(localStorage.getItem('wallet')).type
-}
-
-export function getMyBids() {
-    let bids = JSON.parse(localStorage.getItem('bids'));
-    if (bids === null) bids = []
-    return bids
-}
-
-export function setMyBids(bids) {
-    localStorage.setItem('bids', JSON.stringify(bids));
-}
-
-export function addBid(bid) {
-    let bids = getMyBids()
-    bids.unshift(bid)
-    setMyBids(bids)
-}
-
-export function getAssemblerBids() {
-    let bids = JSON.parse(localStorage.getItem('assemblerBids'));
-    if (bids === null) bids = []
-    return bids
-}
-
-export function setAssemblerBids(bids) {
-    localStorage.setItem('assemblerBids', JSON.stringify(bids));
-}
-
-export function addAssemblerBid(bid) {
-    let bids = getAssemblerBids()
-    bids = bids.concat([bid])
-    setAssemblerBids(bids)
 }
 
 export function getUrl(url) {
@@ -121,4 +86,20 @@ export function isAddressValid(address) {
     } catch (_) {
         return false
     }
+}
+
+export function getForKey(key) {
+    let reqs = JSON.parse(localStorage.getItem(key));
+    if (reqs === null) reqs = []
+    return reqs
+}
+
+export function setForKey(reqs, key) {
+    localStorage.setItem(key, JSON.stringify(reqs));
+}
+
+export function addReq(req, key) {
+    let reqs = getForKey(key)
+    reqs = reqs.concat([req])
+    setForKey(reqs, key)
 }

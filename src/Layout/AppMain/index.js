@@ -1,16 +1,15 @@
-import { Redirect, Route } from 'react-router-dom';
-import React, { Fragment, Suspense } from 'react';
-import AuctionHistory from '../../UtilPage/AuctionHistory';
-import ActiveAuction from '../../UtilPage/GeneralUtils';
+import {Redirect, Route} from 'react-router-dom';
+import React, {Fragment, Suspense} from 'react';
+import TokenomicPage from '../../UtilPage/TokenUtils';
 
-import { ToastContainer } from 'react-toastify';
-import Homepage from "../../Home";
-import FaqPage from "../../Faq";
+import {ToastContainer} from 'react-toastify';
+import AirdropPage from "../../UtilPage/AirdropUtils";
+import DonationPage from "../../UtilPage/DonationUtils";
 
 const AppMain = () => {
     return (
         <Fragment>
-            {/* GeneralUtils */}
+            {/* TokenUtils */}
             <Suspense
                 fallback={
                     <div className="loader-container">
@@ -23,10 +22,9 @@ const AppMain = () => {
                     </div>
                 }
             >
-                <Route path="/general" component={ActiveAuction} />
+                <Route path="/token" component={TokenomicPage} />
             </Suspense>
 
-            {/* AuctionHistory */}
             <Suspense
                 fallback={
                     <div className="loader-container">
@@ -39,10 +37,9 @@ const AppMain = () => {
                     </div>
                 }
             >
-                <Route path="/auction/history" component={AuctionHistory} />
+                <Route path="/airdrop" component={AirdropPage} />
             </Suspense>
 
-            {/* Homepage */}
             <Suspense
                 fallback={
                     <div className="loader-container">
@@ -55,13 +52,16 @@ const AppMain = () => {
                     </div>
                 }
             >
-                <Route path="/faq" component={FaqPage} />
+                <Route
+                    path="/donation"
+                    component={DonationPage}
+                />
             </Suspense>
 
             <Route
                 exact
                 path="/"
-                render={() => <Redirect to="/general" />}
+                render={() => <Redirect to="/token" />}
             />
             <ToastContainer />
         </Fragment>

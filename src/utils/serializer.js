@@ -1,4 +1,4 @@
-import { Serializer } from '@coinbarn/ergo-ts/dist/serializer';
+import {Serializer} from '@coinbarn/ergo-ts/dist/serializer';
 import {Address} from "@coinbarn/ergo-ts/dist/models/address";
 let ergolib = import('ergo-lib-wasm-browser')
 

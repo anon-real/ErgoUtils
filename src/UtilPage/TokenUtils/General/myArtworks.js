@@ -1,46 +1,44 @@
 import React from 'react';
-import {Button, Container, Modal, ModalBody, ModalHeader} from 'reactstrap';
-import {friendlyAddress, friendlyToken, getMyBids, getTxUrl, showMsg} from '../../../utils/helpers';
-import {addReq, getForKey, setForKey} from "../../../utils/assembler";
+import {Modal, ModalBody, ModalHeader, Table} from 'reactstrap';
+import {friendlyAddress, getForKey, getTxUrl, setForKey, showMsg} from '../../../utils/helpers';
 import moment from "moment";
-import {Table} from 'reactstrap';
 import Clipboard from "react-clipboard.js";
+import {decodeString} from "../../../utils/serializer";
 
-export default class MyTokens extends React.Component {
+export default class MyArtworks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             tokens: []
         };
 
-        this.loadMyTokens = this.loadMyTokens.bind(this)
         this.compressReqs = this.compressReqs.bind(this)
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        this.loadMyTokens()
+        this.compressReqs()
     }
 
-    loadMyTokens() {
-        this.setState({tokens: this.compressReqs().reverse()})
+    async processReq(req) {
+        if (req.compressed) return req
+        return {
+            compressed: true,
+            txId: req.id,
+            ergValue: req.outputs[0].value,
+            tokenId: req.outputs[0].assets[0].tokenId,
+            timestamp: req.creationTimestamp,
+            artworkHash: await decodeString(req.outputs[0].additionalRegisters.R8)
+        }
     }
 
     compressReqs() {
-        let reqs = getForKey('tokenIssuance')
-        let toUpdate = false
-        let newReqs = reqs.map(req => {
-            if (req.compressed) return req
-            toUpdate = true
-            return {
-                compressed: true,
-                txId: req.id,
-                ergValue: req.outputs[0].value,
-                tokenId: req.outputs[0].assets[0].tokenId,
-                quantity: req.outputs[0].assets[0].amount,
-                timestamp: req.creationTimestamp,
-            }
+        let reqs = getForKey('artworkNFT')
+        let toUpdate = reqs.filter(req => !req.compressed)
+        let newReqs = reqs.map(req => this.processReq(req))
+        Promise.all(newReqs).then(res => {
+            if (toUpdate) setForKey(res, 'artworkNFT')
+            this.setState({tokens: res.reverse()})
         })
-        if (toUpdate) setForKey(newReqs, 'tokenIssuance')
         return newReqs
     }
 
@@ -54,7 +52,7 @@ export default class MyTokens extends React.Component {
             >
                 <ModalHeader toggle={this.props.close}>
                     <span className="fsize-1 text-muted">
-                        Your issued tokens, click on token id to copy
+                        Your created artwork NFTs, click on NFT id and artwork checksum to copy
                     </span>
                 </ModalHeader>
                 <ModalBody>
@@ -74,8 +72,8 @@ export default class MyTokens extends React.Component {
                             <thead>
                             <tr>
                                 <th className="border-top-0"> Issuance Time</th>
-                                <th className="border-top-0"> Token ID</th>
-                                <th className="border-top-0"> Token Quantity</th>
+                                <th className="border-top-0"> NFT ID</th>
+                                <th className="border-top-0"> Artwork Checksum</th>
                                 <th className="border-top-0"> ERG Value</th>
                                 <th className="border-top-0"> Issuance Transaction</th>
                             </tr>
@@ -97,7 +95,17 @@ export default class MyTokens extends React.Component {
                                                 {friendlyAddress(req.tokenId, 5)}
                                             </Clipboard>{' '}
                                         </td>
-                                        <td> {req.quantity} </td>
+                                        <td>
+                                            <Clipboard
+                                                component="b"
+                                                data-clipboard-text={
+                                                    req.artworkHash
+                                                }
+                                                onSuccess={() => showMsg('Copied!')}
+                                            >
+                                                {friendlyAddress(req.artworkHash, 5)}
+                                            </Clipboard>{' '}
+                                        </td>
                                         <td> {req.ergValue / 1e9} </td>
                                         <td>
                                             <a
@@ -106,7 +114,7 @@ export default class MyTokens extends React.Component {
                                                 target="_blank"
                                                 color="primary"
                                             >
-                        See Transaction
+                                                See Transaction
                                             </a>
                                         </td>
                                     </tr>

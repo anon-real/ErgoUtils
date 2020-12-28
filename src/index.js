@@ -8,15 +8,7 @@ import './assets/base.css';
 import Main from './UtilPage/Main';
 import configureStore from './config/configureStore';
 import {Provider} from 'react-redux';
-import {
-    auctionNFT,
-    dataInputAddress,
-    additionalData,
-    handlePendingBids,
-    unspentBoxesFor, currentHeight,
-} from './utils/explorer';
-import {showMsg} from './utils/helpers';
-import {bidFollower, reqFollower} from "./utils/assembler";
+import {reqFollower} from "./utils/assembler";
 
 const store = configureStore();
 const rootElement = document.getElementById('root');

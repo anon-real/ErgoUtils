@@ -1,6 +1,6 @@
-import {getWalletAddress,} from './helpers';
+import {addReq, getWalletAddress,} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
-import {addReq, follow, p2s, txFee} from "./assembler";
+import {follow, p2s, txFee} from "./assembler";
 
 const template = `{
   val outputOk = {

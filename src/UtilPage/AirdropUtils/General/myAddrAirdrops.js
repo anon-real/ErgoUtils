@@ -1,17 +1,15 @@
 import React from 'react';
-import {Button, Container, Modal, ModalBody, ModalHeader} from 'reactstrap';
-import {friendlyAddress, friendlyToken, getMyBids, getTxUrl, showMsg} from '../../../utils/helpers';
-import {addReq, getForKey, setForKey} from "../../../utils/assembler";
+import {Modal, ModalBody, ModalHeader, Table} from 'reactstrap';
+import {friendlyAddress, getForKey, getTxUrl, setForKey, showMsg} from '../../../utils/helpers';
 import moment from "moment";
-import {Table} from 'reactstrap';
 import Clipboard from "react-clipboard.js";
 import {decodeString} from "../../../utils/serializer";
 
-export default class MyArtworks extends React.Component {
+export default class MyAddrAirdrops extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tokens: []
+            airdrops: []
         };
 
         this.compressReqs = this.compressReqs.bind(this)
@@ -26,20 +24,19 @@ export default class MyArtworks extends React.Component {
         return {
             compressed: true,
             txId: req.id,
-            ergValue: req.outputs[0].value,
-            tokenId: req.outputs[0].assets[0].tokenId,
+            lstName: req.info.lstName,
+            ergValue: req.info.ergValue,
             timestamp: req.creationTimestamp,
-            artworkHash: await decodeString(req.outputs[0].additionalRegisters.R8)
         }
     }
 
     compressReqs() {
-        let reqs = getForKey('artworkNFT')
+        let reqs = getForKey('addrAirdrop')
         let toUpdate = reqs.filter(req => !req.compressed)
         let newReqs = reqs.map(req => this.processReq(req))
         Promise.all(newReqs).then(res => {
-            if (toUpdate) setForKey(res, 'artworkNFT')
-            this.setState({tokens: res.reverse()})
+            if (toUpdate) setForKey(res, 'addrAirdrop')
+            this.setState({airdrops: res.reverse()})
         })
         return newReqs
     }
@@ -54,11 +51,11 @@ export default class MyArtworks extends React.Component {
             >
                 <ModalHeader toggle={this.props.close}>
                     <span className="fsize-1 text-muted">
-                        Your created artwork NFTs, click on NFT id and artwork checksum to copy
+                        Your airdrops to list of addresses
                     </span>
                 </ModalHeader>
                 <ModalBody>
-                    {this.state.tokens.length === 0 ? (
+                    {this.state.airdrops.length === 0 ? (
                         <strong
                             style={{
                                 display: 'flex',
@@ -67,48 +64,26 @@ export default class MyArtworks extends React.Component {
                                 height: '100px',
                             }}
                         >
-                            You have no issued tokens yet
+                            You have no airdrops yet
                         </strong>
                     ) : (
                         <Table striped className="mb-0 border-0">
                             <thead>
                             <tr>
                                 <th className="border-top-0"> Issuance Time</th>
-                                <th className="border-top-0"> NFT ID</th>
-                                <th className="border-top-0"> Artwork Checksum</th>
                                 <th className="border-top-0"> ERG Value</th>
+                                <th className="border-top-0"> Airdrop List</th>
                                 <th className="border-top-0"> Issuance Transaction</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {this.state.tokens.map((req) => {
+                            {this.state.airdrops.map((req) => {
                                 let time = moment(req.timestamp).format('lll');
                                 return (
                                     <tr>
                                         <td> {time} </td>
-                                        <td>
-                                            <Clipboard
-                                                component="b"
-                                                data-clipboard-text={
-                                                    req.tokenId
-                                                }
-                                                onSuccess={() => showMsg('Copied!')}
-                                            >
-                                                {friendlyAddress(req.tokenId, 5)}
-                                            </Clipboard>{' '}
-                                        </td>
-                                        <td>
-                                            <Clipboard
-                                                component="b"
-                                                data-clipboard-text={
-                                                    req.artworkHash
-                                                }
-                                                onSuccess={() => showMsg('Copied!')}
-                                            >
-                                                {friendlyAddress(req.artworkHash, 5)}
-                                            </Clipboard>{' '}
-                                        </td>
                                         <td> {req.ergValue / 1e9} </td>
+                                        <td> {req.lstName} </td>
                                         <td>
                                             <a
                                                 href={getTxUrl(req.txId)}

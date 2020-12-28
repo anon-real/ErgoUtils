@@ -1,25 +1,7 @@
 import React, {Fragment} from 'react';
-import cx from 'classnames';
-import TitleComponent2 from '../../../Layout/AppMain/PageTitleExamples/Variation2';
-import Col from "react-bootstrap/lib/Col";
-import ResponsiveContainer from "recharts/lib/component/ResponsiveContainer";
-import AreaChart from "recharts/lib/chart/AreaChart";
-import Area from "recharts/lib/cartesian/Area";
-import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Button, Container} from "reactstrap";
-import Row from "react-bootstrap/lib/Row";
-import SyncLoader from "react-spinners/SyncLoader";
-import NewToken from "./newToken";
-import {
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader
-} from "reactstrap";
+import {Button, Container, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 import Clipboard from 'react-clipboard.js';
-import {txFee} from "../../../utils/assembler";
-import {friendlyAddress, showMsg} from "../../../utils/helpers";
+import {friendlyAddress, friendlyToken, showMsg} from "../../utils/helpers";
 
 export default class SendModal extends React.Component {
     constructor(props) {
@@ -58,6 +40,17 @@ export default class SendModal extends React.Component {
                                     {this.props.amount}{' '}
                                     erg
                                 </Clipboard>{' '}
+                                {this.props.withToken && <Clipboard
+                                    component="b"
+                                    data-clipboard-text={
+                                        this.props.tokenId
+                                    }
+                                    onSuccess={() => showMsg('Copied!')}
+                                >
+                                    and {' '}
+                                    {this.props.tokenQuantity}{' '}
+                                    of {friendlyAddress(this.props.tokenId, 10)} token
+                                </Clipboard>}{' '}
                                 to{' '}
                                 <Clipboard
                                     component="b"
