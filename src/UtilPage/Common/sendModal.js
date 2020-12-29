@@ -69,7 +69,7 @@ export default class SendModal extends React.Component {
                                 ; the operation will be done automatically afterward.
                             </p>
                             <p>
-                                Your funds will be safe; smart contracts are being used to prevent the assembler service to cheat!
+                                Your funds will be safe. Smart contracts are being used to prevent the intermediate service from cheating!
                             </p>
                         </Container>
                     </ModalBody>
