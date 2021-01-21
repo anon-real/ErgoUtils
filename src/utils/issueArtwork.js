@@ -1,7 +1,7 @@
 import {addReq, getWalletAddress,} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
-import {encodeHex} from "./serializer";
+import {encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
 
 const template = `{
@@ -22,7 +22,7 @@ const template = `{
   sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
 }`;
 
-const assetType = '0101'
+const assetType = [0x01, 0x01]
 
 export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, url = null) {
     let ourAddr = getWalletAddress();
@@ -35,7 +35,7 @@ export async function issueArtworkNFT(ergAmount, toAddress, name, description, a
         description: description,
         decimals: 0,
         registers: {
-            R7: await encodeHex(Serializer.stringToHex(assetType)),
+            R7: await encodeByteArray(assetType),
             R8: await encodeHex(artHash),
         }
     };
@@ -77,7 +77,7 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash) {
     let userTree = Buffer.from(userTreeHex, 'hex').toString('base64');
     let toTree = Buffer.from(toTreeHex, 'hex').toString('base64');
     let artworkHash64 = Buffer.from(artworkHash, 'hex').toString('base64');
-    let encodedAssetType = Buffer.from(Serializer.stringToHex(assetType), 'hex').toString('base64');
+    let encodedAssetType = Buffer.from(assetType).toString('base64');
 
     let script = template
         .replace('$userAddress', userTree)

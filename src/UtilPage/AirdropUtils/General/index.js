@@ -4,6 +4,7 @@ import Row from "react-bootstrap/lib/Row";
 import {css} from "@emotion/core";
 import MoreToCome from "../../Common/moreToCome";
 import ToAddresses from "./toAddresses";
+import ToHolders from "./toHolders";
 
 export const override = css`
   display: block;
@@ -45,11 +46,7 @@ export default class Airdrop extends React.Component {
 
                 <Row>
                     <ToAddresses/>
-                    <MoreToCome
-                        msg='To airdrop among a specific token holders'
-                        title='To Holders'
-                        icon='lnr-gift'
-                    />
+                    <ToHolders/>
                 </Row>
             </Fragment>
         );

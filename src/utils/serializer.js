@@ -20,6 +20,10 @@ export async function encodeHex(reg) {
     return (await ergolib).Constant.from_byte_array(Buffer.from(reg, 'hex')).encode_to_base16()
 }
 
+export async function encodeByteArray(reg) {
+    return (await ergolib).Constant.from_byte_array(reg).encode_to_base16()
+}
+
 function toHexString(byteArray) {
     return Array.from(byteArray, function(byte) {
         return ('0' + (byte & 0xFF).toString(16)).slice(-2);
