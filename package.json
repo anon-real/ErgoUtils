@@ -85,6 +85,7 @@
     "react-metismenu": "^1.4.0",
     "react-motion": "^0.5.2",
     "react-perfect-scrollbar": "^1.4.4",
+    "react-qr-code": "^1.1.1",
     "react-redux": "^5.1.0",
     "react-redux-form": "^1.16.12",
     "react-responsive-tabs": "^3.0.0",

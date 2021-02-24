@@ -3,6 +3,7 @@ import {Button, Container, Modal, ModalBody, ModalFooter, ModalHeader} from "rea
 import Clipboard from 'react-clipboard.js';
 import {friendlyAddress, showMsg} from "../../utils/helpers";
 import {withRouter} from 'react-router-dom';
+import QRCode from "react-qr-code";
 
 class DonationModal extends React.Component {
     constructor(props) {
@@ -32,14 +33,23 @@ class DonationModal extends React.Component {
                             Click on the address to copy!
                         </span>
                     </ModalHeader>
-                    <ModalBody>
-                        <Container>
+                    <ModalBody
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Container
+                        >
                             <p>
                                 I've been contributing to the Ergo ecosystem by developing {' '}
                                 <a target='_blank' href='https://ergoauctions.org'>Ergo Auction House</a>, {' '}
                                 <a target='_blank' href='https://ergoutils.org'>Ergo Utils</a> {' '}
                                 and {' '}
-                                <a target='_blank' href='https://github.com/anon-real/DistributedSigsClient'>Zero Knowledge Treasury</a>
+                                <a target='_blank' href='https://github.com/anon-real/DistributedSigsClient'>Zero
+                                    Knowledge Treasury</a>
                                 {' '} on top of Ergo.
                                 <br/>
                                 <br/>
@@ -57,6 +67,8 @@ class DonationModal extends React.Component {
                                 9ho3quMB1Vs6ejycB4t3tNw5oTkiu2ZSGT9VfBFshxb21baT3ex
                             </Clipboard>
                             </p>
+
+                            <QRCode value="9ho3quMB1Vs6ejycB4t3tNw5oTkiu2ZSGT9VfBFshxb21baT3ex"/>
                         </Container>
                     </ModalBody>
                     <ModalFooter>
