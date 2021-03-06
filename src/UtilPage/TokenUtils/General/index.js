@@ -2,9 +2,10 @@ import React, {Fragment} from 'react';
 import cx from 'classnames';
 import Row from "react-bootstrap/lib/Row";
 import NewToken from "./newToken";
-import ArtWorkNFT from "./artworkNFT";
+import PictureNFT from "./pictureNFT";
 import MoreToCome from "../../Common/moreToCome";
 import {css} from "@emotion/core";
+import AudioNFT from "./audioNFT";
 
 export const override = css`
     display: block;
@@ -48,8 +49,9 @@ export default class Tokenomic extends React.Component {
 
                 <Row>
                     <NewToken/>
-                    <ArtWorkNFT/>
-                    <MoreToCome/>
+                    <PictureNFT/>
+                    <AudioNFT/>
+                    {/*<MoreToCome/>*/}
                 </Row>
             </Fragment>
         );

@@ -20,96 +20,126 @@ import BeatLoader from "react-spinners/BeatLoader";
 import ReactTooltip from "react-tooltip";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import InputGroup from "react-bootstrap/lib/InputGroup";
-import {ergToNano, isFloat, isNatural} from "../../../utils/serializer";
-import {getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../../utils/helpers";
+import {ergToNano, isFloat} from "../../../utils/serializer";
+import {friendlyAddress, getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../../utils/helpers";
 import {Form} from "react-bootstrap";
 import {override} from "./index";
-import {getTokenP2s, issueToken} from "../../../utils/issueToken";
 import SendModal from "../../Common/sendModal";
 import {txFee} from "../../../utils/assembler";
-import MyTokens from "./myTokens";
+import {sha256} from "js-sha256";
+import {geArtworkP2s, issueArtworkNFT, uploadArtwork} from "../../../utils/issueArtwork";
+import MyArtworks from "./myArtworks";
+import Clipboard from "react-clipboard.js";
 
-export default class NewToken extends React.Component {
+export default class PictureNFT extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isOpen: false,
+            sendModal: false,
+            myArtworks: false,
             loading: false,
-            advanced: false,
+            checksum: null,
             ergAmount: "0.1",
             decimals: 0,
             description: "",
             tokenName: "",
-            tokenAmount: 10000,
         };
 
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.issue = this.issue.bind(this);
         this.okToIssue = this.okToIssue.bind(this);
-    }
-
-    componentDidMount() {
-    }
-
-    componentWillUnmount() {
+        this.hashFile = this.hashFile.bind(this);
+        this.setFileChecksum = this.setFileChecksum.bind(this);
     }
 
     openModal() {
-        if (!isWalletSaved()) showMsg('Configure the wallet first', false, true)
-        else {
-            this.setState({
-                toAddress: getWalletAddress(),
-                isOpen: true
-            })
+        if (!isWalletSaved()) {
+            showMsg('Configure the wallet first', false, true)
+            return
         }
+        this.setState({
+            toAddress: getWalletAddress(),
+            isOpen: true,
+        })
     }
 
     closeModal() {
         this.setState({
             isOpen: false,
+            sendModal: false,
+            myArtworks: false,
             loading: false,
-            advanced: false,
+            checksum: null,
             ergAmount: "0.1",
             decimals: 0,
             description: "",
             tokenName: "",
-            tokenAmount: 10000,
-            toAddress: getWalletAddress(),
-        });
+            advanced: false,
+            upload: false,
+            file: null
+        })
     }
 
     okToIssue() {
         return isAddressValid(this.state.toAddress) &&
             ergToNano(this.state.ergAmount) >= 100000000 &&
-            this.state.tokenAmount > 0 && !this.state.loading
+            !this.state.loading && this.state.checksum !== null
+    }
+
+    getErgAmount() {
+        return this.state.ergAmount + 10000000
     }
 
     issue() {
         this.setState({loading: true})
-        getTokenP2s(this.state.toAddress, this.state.tokenAmount, ergToNano(this.state.ergAmount))
+        geArtworkP2s(this.state.toAddress, ergToNano(this.getErgAmount()), this.state.checksum)
             .then(res => {
-                let decimals = parseInt(this.state.decimals)
-                let description = this.state.description
-                let tokenName = this.state.tokenName
-                issueToken(this.state.tokenAmount, ergToNano(this.state.ergAmount), this.state.toAddress,
-                    tokenName, description, decimals, res.address)
-                    .then(regRes => {
-                        this.setState({
-                            sendAddress: res.address,
-                            sendModal: true,
-                        })
+                uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
+                    let description = this.state.description
+                    let tokenName = this.state.tokenName
+                    issueArtworkNFT(ergToNano(this.getErgAmount()), this.state.toAddress,
+                        tokenName, description, res.address, this.state.checksum, true, uploadRes)
+                        .then(regRes => {
+                            this.setState({
+                                sendAddress: res.address,
+                                sendModal: true,
+                            })
 
-                    }).catch(err => {
-                    showMsg("Could not register request to the assembler", true)
-                })
-                    .finally(() => {
-                        this.setState({loading: false})
+                        }).catch(err => {
+                        showMsg("Could not register request to the assembler", true)
                     })
+                        .finally(() => {
+                            this.setState({loading: false})
+                        })
+                })
             }).catch(err => {
             showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
         })
+
+    }
+
+    setFileChecksum(checksum, file) {
+        this.setState({loading: false, checksum: checksum, file: file})
+    }
+
+    hashFile(event) {
+        if (event.target.files.length === 0) {
+            this.setState({checksum: null})
+            return
+        }
+        this.setState({loading: true})
+        let file = event.target.files[0]
+        let reader = new FileReader()
+        let setCS = this.setFileChecksum
+        reader.onload = function (e) {
+            let checksum = sha256(e.target.result)
+            setCS(checksum, file)
+        }
+        reader.readAsArrayBuffer(file)
+
     }
 
     render() {
@@ -122,38 +152,37 @@ export default class NewToken extends React.Component {
                     }}
                     isOpen={this.state.sendModal}
                     address={this.state.sendAddress}
-                    amount={(ergToNano(this.state.ergAmount) + txFee) / 1e9}
+                    amount={(ergToNano(this.getErgAmount()) + txFee) / 1e9}
                 />
-                <MyTokens
-                    close={() => this.setState({myTokens: false})}
-                    isOpen={this.state.myTokens}
+                <MyArtworks
+                    close={() => this.setState({myArtworks: false})}
+                    isOpen={this.state.myArtworks}
                 />
                 <Col md="4">
                     <div className="card mb-3 bg-premium-dark widget-chart card-border">
                         <div className="widget-chart-content text-white">
                             <div className="icon-wrapper rounded-circle opacity-7">
                                 <div className="icon-wrapper-bg bg-dark opacity-6"/>
-                                <i className="lnr-diamond icon-gradient bg-warm-flame"/>
+                                <i className="lnr-picture icon-gradient bg-warm-flame"/>
                             </div>
                             <div className="widget-numbers">
-                                New Token
+                                Picture NFT
                             </div>
                             <ResponsiveContainer height={50}>
                                 <div className="widget-subheading">
-                                    To issue new tokens on Ergo
+                                    To issue NFT representing any kind of picture artwork including GIF
                                 </div>
                             </ResponsiveContainer>
-
                             <ResponsiveContainer height={50}>
                                 <div className="widget-description text-warning">
                                     <Button
-                                        onClick={() => this.setState({myTokens: true})}
+                                        onClick={() => this.setState({myArtworks: true})}
                                         outline
                                         className="btn-outline-light m-2 border-0"
                                         color="primary"
                                     >
                                         <i className="nav-link-icon lnr-layers"> </i>
-                                        <span>My Tokens</span>
+                                        <span>My Artworks</span>
                                     </Button>
                                     <Button
                                         onClick={this.openModal}
@@ -169,7 +198,6 @@ export default class NewToken extends React.Component {
                         </div>
                     </div>
                 </Col>
-
                 <Modal
                     size="md"
                     isOpen={this.state.isOpen}
@@ -178,7 +206,7 @@ export default class NewToken extends React.Component {
                     <ModalHeader toggle={this.props.close}>
                         <ReactTooltip/>
                         <span className="fsize-1 text-muted">
-                        Issuing new token
+                        Issuing Picture NFT
                     </span>
                     </ModalHeader>
                     <ModalBody>
@@ -194,54 +222,8 @@ export default class NewToken extends React.Component {
 
                             <fieldset disabled={this.state.loading}>
                                 <Form>
-                                    <Row>
-                                        <Col md="6">
-                                            <FormGroup>
-                                                <Label for="tokenAmount">Quantity</Label>
-                                                <InputGroup>
-                                                    <Input
-                                                        type="number"
-                                                        value={this.state.tokenAmount}
-                                                        invalid={this.state.tokenAmount <= 0 || !isNatural(this.state.tokenAmount)}
-                                                        onChange={(e) => {
-                                                            this.setState({tokenAmount: e.target.value})
-                                                        }}
-                                                        id="tokenAmount"
-                                                    />
-                                                    {/*<InputGroupAddon addonType="append">*/}
-                                                    {/*    <InputGroupText>ERG</InputGroupText>*/}
-                                                    {/*</InputGroupAddon>*/}
-                                                    <FormFeedback invalid>
-                                                        must be a positive and natural
-                                                    </FormFeedback>
-                                                </InputGroup>
-                                                <FormText>token quantity to be issued</FormText>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md="6">
-                                            <FormGroup>
-                                                <Label for="decimals">Decimals</Label>
-                                                <InputGroup>
-                                                    <Input
-                                                        type="number"
-                                                        value={this.state.decimals}
-                                                        defaultValue="0"
-                                                        invalid={this.state.decimals < 0 || !isNatural(this.state.decimals)}
-                                                        onChange={(e) => {
-                                                            this.setState({decimals: e.target.value})
-                                                        }}
-                                                        id="decimals"
-                                                    />
-                                                    <FormFeedback invalid>
-                                                        must be a whole non-negative
-                                                    </FormFeedback>
-                                                </InputGroup>
-                                                <FormText>number of decimals</FormText>
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
                                     <FormGroup>
-                                        <Label for="tokenName">Token Name</Label>
+                                        <Label for="tokenName">Artwork Name</Label>
                                         <InputGroup>
                                             <Input
                                                 value={this.state.tokenName}
@@ -251,10 +233,10 @@ export default class NewToken extends React.Component {
                                                 id="tokenName"
                                             />
                                         </InputGroup>
-                                        <FormText>token verbose name</FormText>
+                                        <FormText>artwork verbose name</FormText>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="description">Description</Label>
+                                        <Label for="description">Artwork Description</Label>
                                         <InputGroup>
                                             <Input
                                                 type="textarea"
@@ -265,8 +247,49 @@ export default class NewToken extends React.Component {
                                                 id="description"
                                             />
                                         </InputGroup>
-                                        <FormText>token description</FormText>
+                                        <FormText>description of your artwork; anything to represent it to others, e.g.
+                                            link to the artwork</FormText>
                                     </FormGroup>
+                                    <Row>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <Label for="exampleFile">Artwork File</Label>
+                                                <Input onChange={this.hashFile} type="file" name="file"
+                                                       style={{overflowY: 'hidden'}}
+                                                       id="exampleFile"/>
+                                                <FormText color="muted">
+                                                    will be only used to calculate the checksum of your artwork locally
+                                                </FormText>
+                                                {this.state.checksum &&
+                                                <p>checksum <Clipboard
+                                                    component="b"
+                                                    data-clipboard-text={
+                                                        this.state.checksum
+                                                    }
+                                                    onSuccess={() => showMsg('Copied!')}
+                                                >
+                                                    {friendlyAddress(this.state.checksum, 5)}
+                                                </Clipboard>{' '}
+
+                                                </p>}
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md='6'>
+                                            <FormGroup>
+                                                <CustomInput
+                                                    type="checkbox" id="upload"
+                                                    onChange={(e) => this.setState({upload: e.target.checked})}
+                                                    label="Upload Artwork"/>
+                                                <FormText color="muted">
+                                                    If enabled, the artwork will be uploaded to imgbb.com; useful for
+                                                    presenting artwork in auctioning.
+                                                    <br/>
+                                                    The size must be less than 32 MB
+                                                </FormText>
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+
                                     <CustomInput
                                         disabled={this.state.loading}
                                         type="checkbox" id="advanced"
@@ -307,7 +330,7 @@ export default class NewToken extends React.Component {
                                                 </FormFeedback>
                                             </InputGroup>
                                             <FormText>
-                                                amount of ERG to be sent with the issued tokens
+                                                amount of ERG to be sent with the issued NFT
                                             </FormText>
                                         </FormGroup>
                                         <FormGroup>
@@ -324,7 +347,7 @@ export default class NewToken extends React.Component {
                                             <FormFeedback invalid>
                                                 Invalid ergo address.
                                             </FormFeedback>
-                                            <FormText>issued tokens and ERG amount will be sent to this address, any P2S
+                                            <FormText>issued NFT and ERG amount will be sent to this address, any P2S
                                                 address works</FormText>
                                         </FormGroup>
                                     </div>}

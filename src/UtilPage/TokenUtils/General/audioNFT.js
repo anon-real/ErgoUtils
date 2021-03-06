@@ -31,7 +31,7 @@ import {geArtworkP2s, issueArtworkNFT, uploadArtwork} from "../../../utils/issue
 import MyArtworks from "./myArtworks";
 import Clipboard from "react-clipboard.js";
 
-export default class ArtWorkNFT extends React.Component {
+export default class AudioNFT extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -94,26 +94,26 @@ export default class ArtWorkNFT extends React.Component {
 
     issue() {
         this.setState({loading: true})
-        geArtworkP2s(this.state.toAddress, ergToNano(this.getErgAmount()), this.state.checksum)
+        geArtworkP2s(this.state.toAddress, ergToNano(this.getErgAmount()), this.state.checksum, false)
             .then(res => {
-                uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
-                    let description = this.state.description
-                    let tokenName = this.state.tokenName
-                    issueArtworkNFT(ergToNano(this.getErgAmount()), this.state.toAddress,
-                        tokenName, description, res.address, this.state.checksum, uploadRes)
-                        .then(regRes => {
+                let description = this.state.description
+                let tokenName = this.state.tokenName
+                issueArtworkNFT(ergToNano(this.getErgAmount()), this.state.toAddress,
+                    tokenName, description, res.address, this.state.checksum, false, this.state.upload)
+                    .then(regRes => {
+                        if (regRes) {
                             this.setState({
                                 sendAddress: res.address,
                                 sendModal: true,
                             })
+                        }
 
-                        }).catch(err => {
-                        showMsg("Could not register request to the assembler", true)
-                    })
-                        .finally(() => {
-                            this.setState({loading: false})
-                        })
+                    }).catch(err => {
+                    showMsg("Could not register request to the assembler", true)
                 })
+                    .finally(() => {
+                        this.setState({loading: false})
+                    })
             }).catch(err => {
             showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
@@ -163,14 +163,16 @@ export default class ArtWorkNFT extends React.Component {
                         <div className="widget-chart-content text-white">
                             <div className="icon-wrapper rounded-circle opacity-7">
                                 <div className="icon-wrapper-bg bg-dark opacity-6"/>
-                                <i className="lnr-picture icon-gradient bg-warm-flame"/>
+                                <i className="lnr-music-note icon-gradient bg-warm-flame"/>
                             </div>
                             <div className="widget-numbers">
-                                Artwork NFT
+                                Audio NFT
                             </div>
-                            <div className="widget-subheading">
-                                To issue NFT representing an artwork
-                            </div>
+                            <ResponsiveContainer height={50}>
+                                <div className="widget-subheading">
+                                    To issue NFT representing an audio artwork
+                                </div>
+                            </ResponsiveContainer>
                             <ResponsiveContainer height={50}>
                                 <div className="widget-description text-warning">
                                     <Button
@@ -204,7 +206,7 @@ export default class ArtWorkNFT extends React.Component {
                     <ModalHeader toggle={this.props.close}>
                         <ReactTooltip/>
                         <span className="fsize-1 text-muted">
-                        Issuing Artwork NFT
+                        Issuing Audio NFT
                     </span>
                     </ModalHeader>
                     <ModalBody>
@@ -273,16 +275,21 @@ export default class ArtWorkNFT extends React.Component {
                                             </FormGroup>
                                         </Col>
                                         <Col md='6'>
+                                        </Col>
+                                        <Col md='12'>
                                             <FormGroup>
-                                                <CustomInput
-                                                    type="checkbox" id="upload"
-                                                    onChange={(e) => this.setState({upload: e.target.checked})}
-                                                    label="Upload Artwork"/>
+                                                <Label for="exampleFile">Direct Download Link</Label>
+                                                <Input
+                                                    type="text" id="upload"
+                                                    onChange={(e) => this.setState({upload: e.target.value})}
+                                                    label="Direct Link"/>
                                                 <FormText color="muted">
-                                                    If enabled, the artwork will be uploaded to imgbb.com; useful for
-                                                    presenting artwork in auctioning.
+                                                    Direct download link of the audio. Example of google drive: <text
+                                                    style={{
+                                                        fontSize: "10px",
+                                                    }}>https://docs.google.com/u/0/uc?export=download&id=1h0acJ12eYCw3XWMKM83vdblkxcvyjHnm</text>
                                                     <br/>
-                                                    The size must be less than 32 MB
+                                                    If you are using google drive, make sure your audio size is below 100MB
                                                 </FormText>
                                             </FormGroup>
                                         </Col>

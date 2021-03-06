@@ -22,10 +22,12 @@ const template = `{
   sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
 }`;
 
-const assetType = [0x01, 0x01]
+const pictureType = [0x01, 0x01]
+const audioType = [0x01, 0x02]
 
-export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, url = null) {
+export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, isPicture = true, url = null) {
     let ourAddr = getWalletAddress();
+    let assetType = isPicture? pictureType : audioType
 
     let outBox = {
         ergValue: ergAmount,
@@ -69,8 +71,10 @@ export async function issueArtworkNFT(ergAmount, toAddress, name, description, a
     })
 }
 
-export async function geArtworkP2s(toAddress, ergAmount, artworkHash) {
+export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture = true) {
     let ourAddr = getWalletAddress();
+    let assetType = isPicture? pictureType : audioType
+
     let userTreeHex = new Address(ourAddr).ergoTree
     let toTreeHex = new Address(toAddress).ergoTree
 
