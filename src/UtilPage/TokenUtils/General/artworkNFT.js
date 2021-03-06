@@ -88,14 +88,18 @@ export default class ArtWorkNFT extends React.Component {
             !this.state.loading && this.state.checksum !== null
     }
 
+    getErgAmount() {
+        return this.state.ergAmount + 10000000
+    }
+
     issue() {
         this.setState({loading: true})
-        geArtworkP2s(this.state.toAddress, ergToNano(this.state.ergAmount), this.state.checksum)
+        geArtworkP2s(this.state.toAddress, ergToNano(this.getErgAmount()), this.state.checksum)
             .then(res => {
                 uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
                     let description = this.state.description
                     let tokenName = this.state.tokenName
-                    issueArtworkNFT(ergToNano(this.state.ergAmount), this.state.toAddress,
+                    issueArtworkNFT(ergToNano(this.getErgAmount()), this.state.toAddress,
                         tokenName, description, res.address, this.state.checksum, uploadRes)
                         .then(regRes => {
                             this.setState({
@@ -148,7 +152,7 @@ export default class ArtWorkNFT extends React.Component {
                     }}
                     isOpen={this.state.sendModal}
                     address={this.state.sendAddress}
-                    amount={(ergToNano(this.state.ergAmount) + txFee) / 1e9}
+                    amount={(ergToNano(this.getErgAmount()) + txFee) / 1e9}
                 />
                 <MyArtworks
                     close={() => this.setState({myArtworks: false})}
