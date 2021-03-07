@@ -84,21 +84,20 @@ export default class AudioNFT extends React.Component {
 
     okToIssue() {
         return isAddressValid(this.state.toAddress) &&
-            ergToNano(this.state.ergAmount) >= 100000000 &&
             !this.state.loading && this.state.checksum !== null
     }
 
     getErgAmount() {
-        return this.state.ergAmount + 10000000
+        return ergToNano(this.state.ergAmount) + 10000000
     }
 
     issue() {
         this.setState({loading: true})
-        geArtworkP2s(this.state.toAddress, ergToNano(this.getErgAmount()), this.state.checksum, false)
+        geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum, false)
             .then(res => {
                 let description = this.state.description
                 let tokenName = this.state.tokenName
-                issueArtworkNFT(ergToNano(this.getErgAmount()), this.state.toAddress,
+                issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
                     tokenName, description, res.address, this.state.checksum, false, this.state.upload)
                     .then(regRes => {
                         if (regRes) {
@@ -152,7 +151,7 @@ export default class AudioNFT extends React.Component {
                     }}
                     isOpen={this.state.sendModal}
                     address={this.state.sendAddress}
-                    amount={(ergToNano(this.getErgAmount()) + txFee) / 1e9}
+                    amount={(this.getErgAmount() + txFee) / 1e9}
                 />
                 <MyArtworks
                     close={() => this.setState({myArtworks: false})}
@@ -309,9 +308,6 @@ export default class AudioNFT extends React.Component {
                                             <InputGroup>
                                                 <Input
                                                     type="text"
-                                                    invalid={
-                                                        ergToNano(this.state.ergAmount) < 100000000
-                                                    }
                                                     value={
                                                         this.state.ergAmount
                                                     }
