@@ -292,6 +292,16 @@ export default class AudioNFT extends React.Component {
                                                 </FormText>
                                             </FormGroup>
                                         </Col>
+                                        <Col md='12'>
+                                            <FormGroup>
+                                                {this.state.upload && <div><audio controls="controls">
+                                                    <source src={this.state.upload}/>
+                                                </audio>
+                                                <FormText color="muted">
+                                                    You should be able to listen to your audio here if the provided link is OK!
+                                                </FormText></div>}
+                                            </FormGroup>
+                                        </Col>
                                     </Row>
 
                                     <CustomInput

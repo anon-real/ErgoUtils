@@ -79,20 +79,23 @@ export default class NewToken extends React.Component {
         });
     }
 
+    getErgAmount() {
+        return ergToNano(this.state.ergAmount) + 10000000
+    }
+
     okToIssue() {
         return isAddressValid(this.state.toAddress) &&
-            ergToNano(this.state.ergAmount) >= 100000000 &&
             this.state.tokenAmount > 0 && !this.state.loading
     }
 
     issue() {
         this.setState({loading: true})
-        getTokenP2s(this.state.toAddress, this.state.tokenAmount, ergToNano(this.state.ergAmount))
+        getTokenP2s(this.state.toAddress, this.state.tokenAmount, this.getErgAmount())
             .then(res => {
                 let decimals = parseInt(this.state.decimals)
                 let description = this.state.description
                 let tokenName = this.state.tokenName
-                issueToken(this.state.tokenAmount, ergToNano(this.state.ergAmount), this.state.toAddress,
+                issueToken(this.state.tokenAmount, this.getErgAmount(), this.state.toAddress,
                     tokenName, description, decimals, res.address)
                     .then(regRes => {
                         this.setState({
@@ -122,7 +125,7 @@ export default class NewToken extends React.Component {
                     }}
                     isOpen={this.state.sendModal}
                     address={this.state.sendAddress}
-                    amount={(ergToNano(this.state.ergAmount) + txFee) / 1e9}
+                    amount={(this.getErgAmount() + txFee) / 1e9}
                 />
                 <MyTokens
                     close={() => this.setState({myTokens: false})}
@@ -281,9 +284,6 @@ export default class NewToken extends React.Component {
                                             <InputGroup>
                                                 <Input
                                                     type="text"
-                                                    invalid={
-                                                        ergToNano(this.state.ergAmount) < 100000000
-                                                    }
                                                     value={
                                                         this.state.ergAmount
                                                     }
