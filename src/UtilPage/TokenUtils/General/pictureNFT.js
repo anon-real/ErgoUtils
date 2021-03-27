@@ -96,6 +96,7 @@ export default class PictureNFT extends React.Component {
         geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum)
             .then(res => {
                 uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
+                    if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to imgbb.com")
                     let description = this.state.description
                     let tokenName = this.state.tokenName
                     issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
@@ -112,6 +113,9 @@ export default class PictureNFT extends React.Component {
                         .finally(() => {
                             this.setState({loading: false})
                         })
+                }).catch(err => {
+                    showMsg(err.message, true)
+                    this.setState({loading: false})
                 })
             }).catch(err => {
             showMsg("Could not contact the assembler service", true)
