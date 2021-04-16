@@ -26,6 +26,7 @@ const pictureType = [0x01, 0x01]
 const audioType = [0x01, 0x02]
 
 export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, isPicture = true, url = null) {
+    console.log('fock', url)
     let ourAddr = getWalletAddress();
     let assetType = isPicture? pictureType : audioType
 

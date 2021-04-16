@@ -2,7 +2,7 @@ import {get, post} from './rest';
 import {addReq, getForKey, getUrl, setForKey, showStickyMsg,} from './helpers';
 import moment from "moment";
 
-const url = 'https://assembler.ergoutils.org/';
+const url = 'http://localhost:9000/';
 export const txFee = 2000000
 
 export async function follow(request) {
