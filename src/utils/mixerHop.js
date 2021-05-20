@@ -25,7 +25,7 @@ import {lastBlock, sendTx, txConfNum, unspentBoxesFor} from "./explorer";
 import moment from "moment";
 import {post} from "./rest";
 
-const nodes = ['http://95.217.50.117:9053', 'http://213.239.193.208:9053', 'http://159.65.11.55:9053']
+// const nodes = ['http://95.217.50.117:9053', 'http://213.239.193.208:9053', 'http://159.65.11.55:9053']
 
 const block_headers = BlockHeaders.from_json([
     {
@@ -135,12 +135,12 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
 export async function broadcastTxs(txs) {
     console.log('broadcasting')
     for (let i = 0; i < txs.length; i++) {
-        for (let j = 0; j < nodes.length; j++) {
+        // for (let j = 0; j < nodes.length; j++) {
             try {
-                await post(nodes[j] + '/transactions', txs[i])
+                await sendTx(txs[i])
             } catch (err) {
             }
-        }
+        // }
         await sleep(200)
     }
 }
