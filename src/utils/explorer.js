@@ -45,6 +45,18 @@ async function getRequest(url) {
     })
 }
 
+export async function lastBlockId() {
+    return getRequest('/blocks?limit=1')
+        .then(res => res.data)
+        .then(res => res.items[0].id)
+}
+
+export async function lastBlock() {
+    return getRequest(`/blocks/${await lastBlockId()}`)
+        .then(res => res.data)
+        .then(res => res.block.header)
+}
+
 export async function currentHeight() {
     // return explorer.getCurrentHeight();
     return getRequest('/blocks?limit=1')
@@ -115,4 +127,10 @@ export async function getSpendingTx(boxId) {
 
 export function sendTx(tx) {
     explorer.broadcastTx(tx);
+}
+
+export async function txConfNum(id) {
+    let tx = await txById(id)
+    if (tx.summary === undefined) return 0
+    else return tx.summary.confirmationsCount
 }

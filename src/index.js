@@ -9,6 +9,7 @@ import Main from './UtilPage/Main';
 import configureStore from './config/configureStore';
 import {Provider} from 'react-redux';
 import {reqFollower} from "./utils/assembler";
+import {unspentBoxesFor} from "./utils/explorer";
 
 const store = configureStore();
 const rootElement = document.getElementById('root');
@@ -17,6 +18,15 @@ const renderApp = (Component) => {
     setInterval(() => {
         reqFollower();
     }, 20000);
+
+    import('./utils/mixerHop').then(res => {
+        res.handleEntries()
+    })
+    setInterval(() => {
+        import('./utils/mixerHop').then(res => {
+            res.handleEntries()
+        })
+    }, 30000);
 
     ReactDOM.render(
         <Provider store={store}>

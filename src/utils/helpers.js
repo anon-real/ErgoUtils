@@ -103,3 +103,7 @@ export function addReq(req, key) {
     reqs = reqs.concat([req])
     setForKey(reqs, key)
 }
+
+export function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}

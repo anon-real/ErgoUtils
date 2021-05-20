@@ -3,7 +3,8 @@ import {withRouter} from 'react-router-dom';
 
 import MetisMenu from 'react-metismenu';
 
-import {AirdropNav, DonationNav, TokenomicNav} from './NavItems';
+import {AirdropNav, DonationNav, OthersNav, TokenomicNav} from './NavItems';
+import Other from "../../UtilPage/OtherUtils/General";
 
 
 class Nav extends Component {
@@ -19,6 +20,7 @@ class Nav extends Component {
                 <div className="divider text-muted opacity-2" />
                 <MetisMenu content={TokenomicNav} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
                 <MetisMenu content={AirdropNav} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
+                <MetisMenu content={OthersNav} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
                 <div className="divider text-muted opacity-2" />
 
                 <MetisMenu content={DonationNav} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>

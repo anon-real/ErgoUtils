@@ -1,8 +1,7 @@
 import {addReq, getWalletAddress,} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
-import {follow, p2s, txFee} from "./assembler";
-import {encodeHex} from "./serializer";
-import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
+import {follow, p2s} from "./assembler";
+
 const blake = require('blakejs')
 
 const template = `{

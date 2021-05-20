@@ -1,5 +1,6 @@
 import {Serializer} from '@coinbarn/ergo-ts/dist/serializer';
 import {Address} from "@coinbarn/ergo-ts/dist/models/address";
+
 let ergolib = import('ergo-lib-wasm-browser')
 
 const floatRe = new RegExp('^([0-9]*[.])?[0-9]*$')
@@ -24,7 +25,7 @@ export async function encodeByteArray(reg) {
     return (await ergolib).Constant.from_byte_array(reg).encode_to_base16()
 }
 
-function toHexString(byteArray) {
+export function toHexString(byteArray) {
     return Array.from(byteArray, function(byte) {
         return ('0' + (byte & 0xFF).toString(16)).slice(-2);
     }).join('')

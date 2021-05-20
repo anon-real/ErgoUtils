@@ -23,3 +23,11 @@ export const DonationNav = [
         to: '#/donation',
     },
 ];
+
+export const OthersNav = [
+    {
+        icon: 'pe-7s-folder',
+        label: 'Others',
+        to: '#/others',
+    },
+];
