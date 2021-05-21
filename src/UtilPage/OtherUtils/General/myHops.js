@@ -21,7 +21,8 @@ export default class MyHops extends React.Component {
         return {
             depositAddr: req.depositAddr,
             numLvls: req.numLvls,
-            toAddr: req.toAddr
+            toAddr: req.toAddr,
+            name: req.name? req.name : ''
         }
     }
 
@@ -68,6 +69,7 @@ export default class MyHops extends React.Component {
                         <Table striped className="mb-0 border-0">
                             <thead>
                             <tr>
+                                <th className="border-top-0"> Name</th>
                                 <th className="border-top-0"> Deposit Address</th>
                                 <th className="border-top-0"> Number of Steps</th>
                                 <th className="border-top-0"> Withdraw Address</th>
@@ -77,6 +79,7 @@ export default class MyHops extends React.Component {
                             {this.state.hops.map((req) => {
                                 return (
                                     <tr>
+                                        <td> {req.name} </td>
                                         <td onClick={() => copyToClipboard(req.depositAddr)}> {friendlyAddress(req.depositAddr, 10)} </td>
                                         <td> {req.numLvls} </td>
                                         <td onClick={() => copyToClipboard(req.toAddr)}> {friendlyAddress(req.toAddr, 10)} </td>

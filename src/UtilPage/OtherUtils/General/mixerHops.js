@@ -21,6 +21,7 @@ export default class MixerHops extends React.Component {
             sendModal: false,
             loading: false,
             toAddr: getWalletAddress(),
+            name: '',
         };
 
         this.openModal = this.openModal.bind(this);
@@ -62,6 +63,7 @@ export default class MixerHops extends React.Component {
     okToStart() {
         return numLvls > 0 &&
             isAddressValid(this.state.toAddr) &&
+            this.state.name &&
             !this.state.loading
     }
 
@@ -69,7 +71,7 @@ export default class MixerHops extends React.Component {
         const res = await import('../../../utils/mixerHop');
         let sec = res.rndSecret()
         let depositAddr = res.secToAddr(sec)
-        addReq({secret: sec, numLvls: numLvls, toAddr: this.state.toAddr, depositAddr: depositAddr}, 'hops')
+        addReq({secret: sec, numLvls: numLvls, toAddr: this.state.toAddr, depositAddr: depositAddr, name: this.state.name}, 'hops')
         showMsg('Mixer obfuscating address created successfully. Check it out in My Hops section.')
         this.setState({isOpen: false})
     }
@@ -170,6 +172,23 @@ export default class MixerHops extends React.Component {
                                 <FormText>
                                     You will receive your withdrawals in this address without anyone knowing it is from
                                     the mixer
+                                </FormText>
+
+                            </FormGroup>
+                            <FormGroup>
+                                <Input
+                                    value={this.state.name}
+                                    onChange={(event) => {
+                                        this.setState({
+                                            name: event.target.value
+                                        });
+                                    }}
+                                    style={{fontSize: "12px"}}
+                                    type="text"
+                                    invalid={!this.state.name}
+                                />
+                                <FormText>
+                                    Specify a name for this address
                                 </FormText>
 
                             </FormGroup>
