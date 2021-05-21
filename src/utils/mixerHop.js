@@ -184,5 +184,6 @@ export async function handleEntries() {
             showStickyMsg(`Successfully obfuscated ${boxes[j].value / 1e9} ERG. Check it out in the My Withdrawals section!`)
         }
     }
+    await sleep(10000)
 }
 

@@ -22,11 +22,16 @@ const renderApp = (Component) => {
     import('./utils/mixerHop').then(res => {
         res.handleEntries()
     })
-    setInterval(() => {
+
+    function handleEnt() {
         import('./utils/mixerHop').then(res => {
-            res.handleEntries()
+            res.handleEntries().then(_ => {
+                setTimeout(handleEnt, 20000)
+            })
         })
-    }, 30000);
+    }
+
+    setTimeout(handleEnt, 0)
 
     ReactDOM.render(
         <Provider store={store}>
