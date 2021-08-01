@@ -98,12 +98,18 @@ export default class ToAddresses extends React.Component {
             tokenAmount = 0
         }
         this.setState({loading: true})
-        getAddrAirdropP2s(lst.addresses, ergToNano(this.state.distErg), tokenId, parseInt(tokenAmount), this.state.includingFee)
+        let ergAmount = ergToNano(this.state.distErg)
+        let includingFee = this.state.includingFee
+        if (this.state.withToken) {
+            ergAmount = 10000000
+            includingFee = true
+        }
+        getAddrAirdropP2s(lst.addresses, ergAmount, tokenId, parseInt(tokenAmount), includingFee)
             .then(res => {
-                startAddrAirdrop(res.address, lst, ergToNano(this.state.distErg), tokenId, parseInt(tokenAmount), this.state.includingFee)
+                startAddrAirdrop(res.address, lst, ergAmount, tokenId, parseInt(tokenAmount), includingFee)
                     .then(reg => {
                         let fee = addrAirdropFee(lst.addresses.length)
-                        let ergAmount = ergToNano(this.state.distErg) + (this.state.includingFee ? 0 : fee)
+                        ergAmount = ergAmount + (includingFee ? 0 : fee)
                         this.setState({
                             sendAddress: res.address,
                             sendModal: true,
@@ -111,6 +117,7 @@ export default class ToAddresses extends React.Component {
                         })
                     }).catch(err => {
                     showMsg("Could not register request to the assembler", true)
+                    console.log('err', err)
                 }).finally(_ => {
                     this.setState({loading: false})
                 })
@@ -157,6 +164,7 @@ export default class ToAddresses extends React.Component {
                     tokenId={tokenId}
                     tokenQuantity={tokenQuantity}
                     withToken={this.state.withToken}
+                    ignoreErg={this.state.withToken}
                 />
                 <MyAddrAirdrops
                     close={() => {
@@ -285,7 +293,19 @@ export default class ToAddresses extends React.Component {
                                             className="pe-7s-plus font-size-lg btn-icon-wrapper"> </i></button>
                                     </Col>
                                 </Row>
+
                                 <Row>
+                                    <Col md='8'>
+                                        <FormGroup>
+                                            <CustomInput
+                                                type="checkbox"
+                                                id="upload"
+                                                onChange={(e) => this.setState({withToken: e.target.checked})}
+                                                label="Custom token"/>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                {!this.state.withToken && <Row>
                                     <Col md='8'>
                                         <FormGroup>
                                             <InputGroup>
@@ -346,16 +366,7 @@ export default class ToAddresses extends React.Component {
                                             </FormText>
                                         </FormGroup>
                                     </Col>
-                                    <Col md='4'>
-                                        <FormGroup>
-                                            <CustomInput
-                                                type="checkbox"
-                                                id="upload"
-                                                onChange={(e) => this.setState({withToken: e.target.checked})}
-                                                label="Include Token"/>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                                </Row>}
                                 {this.state.withToken && <Row>
                                     <Col md='8'>
                                         <FormGroup>

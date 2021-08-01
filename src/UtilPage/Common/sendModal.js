@@ -29,7 +29,7 @@ export default class SendModal extends React.Component {
                         <Container>
                             <p>
                                 Send{' '}
-                                <Clipboard
+                                {!this.props.ignoreErg && <Clipboard
                                     component="b"
                                     data-clipboard-text={
                                         this.props.amount
@@ -39,7 +39,7 @@ export default class SendModal extends React.Component {
                                     exactly{' '}
                                     {this.props.amount}{' '}
                                     erg
-                                </Clipboard>{' '}
+                                </Clipboard>}{' '}
                                 {this.props.withToken && <Clipboard
                                     component="b"
                                     data-clipboard-text={
@@ -47,7 +47,7 @@ export default class SendModal extends React.Component {
                                     }
                                     onSuccess={() => showMsg('Copied!')}
                                 >
-                                    and {' '}
+                                    {!this.props.ignoreErg && <span>and {' '}</span>}
                                     {this.props.tokenQuantity}{' '}
                                     of {friendlyAddress(this.props.tokenId, 10)} token
                                 </Clipboard>}{' '}
