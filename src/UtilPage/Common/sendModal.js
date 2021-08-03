@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import {Button, Container, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 import Clipboard from 'react-clipboard.js';
 import {friendlyAddress, friendlyToken, showMsg} from "../../utils/helpers";
+import QRCode from "react-qr-code";
 
 export default class SendModal extends React.Component {
     constructor(props) {
@@ -71,6 +72,8 @@ export default class SendModal extends React.Component {
                             <p>
                                 Your funds will be safe. Smart contracts are being used to prevent the intermediate service from cheating!
                             </p>
+                            <QRCode value={"https://explorer.ergoplatform.com/payment-request?address=" + this.props.address +
+                            "&amount=" + this.props.amount}/>
                         </Container>
                     </ModalBody>
                     <ModalFooter>

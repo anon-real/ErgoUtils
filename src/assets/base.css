@@ -12331,3 +12331,8 @@ body {
   outline: none;
   padding: 5px;
 }
+
+svg {
+  display: block;
+  margin: auto;
+}
