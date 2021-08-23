@@ -81,7 +81,9 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
     let txs = []
     outAddr = Address.from_mainnet_str(outAddr);
 
-    let curs = new ErgoBoxes(ErgoBox.from_json(box))
+    let curIn = ErgoBox.from_json(box)
+    let inTokens = curIn.tokens()
+    let curs = new ErgoBoxes(curIn)
     let curSecs = [SecretKey.dlog_from_bytes(Buffer.from(secret, 'hex'))]
 
     for (let i = 0; i < numLvls + 1; i++) {
@@ -109,8 +111,11 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
         let addr = curSecs[outs.len()].get_address()
         if (i === numLvls) addr = outAddr
         const outbox = new ErgoBoxCandidateBuilder(getBoxValue(amount),
-            Contract.pay_to_address(addr), header.height).build();
-        outs.add(outbox)
+            Contract.pay_to_address(addr), header.height);
+        for (let j = 0; j < inTokens.len(); j++)
+            outbox.add_token(inTokens.get(j).id(), inTokens.get(j).amount())
+
+        outs.add(outbox.build())
 
         const box_selector = new SimpleBoxSelector();
         const box_selection = box_selector.select(curs, getBoxValue(inSum + txFee), new Tokens());
