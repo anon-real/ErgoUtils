@@ -15,23 +15,6 @@ const store = configureStore();
 const rootElement = document.getElementById('root');
 
 const renderApp = (Component) => {
-    let x = [
-  {
-    "secret":"4aee4fa972e791c02e5811cc9065f92eb4e141cdb6d8c7ca2189f67f6fdfb407",
-    "numLvls":5,
-    "toAddr":"9gsePpxBLhtvud2RuqrCQ9N8dGNZu1af4FVJ7BdGGffuD41AxHR",
-    "depositAddr":"9hgdVmZRwUCKzBDb4vHFc8R7MdQGrJWdFkyx9Ffz7YL3VR1vcqJ",
-    "name": "yoroi1"
-  },
-  {
-    "secret":"87f649a06363887e9a24adbac3e3d7a2d5e8bd0b99624fab3f7334db38be5559",
-    "numLvls":3,
-    "toAddr":"9eiiXzUHQ18mfjY7exNiXKxvp9FAAWMhNN6jKKBF4P2ABxbpj2j",
-    "depositAddr":"9fYSLo6NibUcz8C92fkmNvXRXzfvSG7EfvBrE5imoFWGvxDtWrZ",
-    "name": "deadit-yoroi"
-  }
-]
-    console.log(JSON.stringify(x))
     setInterval(() => {
         reqFollower();
     }, 20000);
