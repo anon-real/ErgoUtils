@@ -94,6 +94,7 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
             curSecs.push(SecretKey.random_dlog())
         levelSecs.push(curSecs.map(sec => toHexString(sec.to_bytes())))
 
+
         const outs = ErgoBoxCandidates.empty();
         let txFee = getFee()
         let amount = -txFee
@@ -118,7 +119,7 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
         outs.add(outbox.build())
 
         const box_selector = new SimpleBoxSelector();
-        const box_selection = box_selector.select(curs, getBoxValue(inSum + txFee), new Tokens());
+        const box_selection = box_selector.select(curs, getBoxValue(inSum + txFee), inTokens);
         const tx_builder = TxBuilder.new(box_selection, outs, header.height, getBoxValue(txFee), outAddr, BoxValue.SAFE_USER_MIN());
         const tx = tx_builder.build();
         const wallet = Wallet.from_secrets(sks);
