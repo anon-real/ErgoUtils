@@ -1,12 +1,13 @@
-import {addReq, getWalletAddress,} from './helpers';
+import {addReq, getWalletAddress} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
 import {encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
+import IPFS from "ipfs-core";
 
 const template = `{
-  val outputOk = {
-    val assetType = OUTPUTS(0).R7[Coll[Byte]].get
+    val outputOk = {
+        val assetType = OUTPUTS(0).R7[Coll[Byte]].get
     val artworkHash = OUTPUTS(0).R8[Coll[Byte]].get
     val issued = OUTPUTS(0).tokens.getOrElse(0, (INPUTS(0).id, 0L))
     INPUTS(0).id == issued._1 && issued._2 == 1 &&
@@ -14,16 +15,18 @@ const template = `{
       OUTPUTS(0).propositionBytes == fromBase64("$toAddress") &&
       assetType == fromBase64("$artworkType") &&
       artworkHash == fromBase64("$curHash")
-  }
-  val returnFunds = {
-    val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 4000000
-    OUTPUTS(0).value >= total && OUTPUTS(0).propositionBytes == fromBase64("$userAddress")
-  }
-  sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
+    }
+    val returnFunds = {
+        val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 4000000
+        OUTPUTS(0).value >= total && OUTPUTS(0).propositionBytes == fromBase64("$userAddress")
+    }
+    sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
 }`;
 
 const pictureType = [0x01, 0x01]
 const audioType = [0x01, 0x02]
+
+var ipflInstance;
 
 export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, isPicture = true, url = null) {
     let ourAddr = getWalletAddress();
@@ -95,13 +98,11 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture 
 
 export async function uploadArtwork(file, upload) {
     if (upload) {
-        let form = new FormData();
-        form.append("image", file)
-        return fetch("https://api.imgbb.com/1/upload?key=951beda2107cac29c2409c886d4a192b", {
-            method: 'POST',
-            mode: 'cors',
-            body: form,
-        }).then(res => res.json())
-            .then(res => res.data.url)
-    } else return null
+        if (!ipflInstance) {
+            ipflInstance = await IPFS.create();
+        }
+
+        let cid = (await ipflInstance.add(file)).cid.toV1().toString();
+        return `https://cloudflare-ipfs.com/ipfs/${cid}`;
+    } else return null;
 }
