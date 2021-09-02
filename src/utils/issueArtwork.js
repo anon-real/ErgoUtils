@@ -3,6 +3,7 @@ import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
 import {encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
+import ipfs from './ipfsImageUploader'
 
 const template = `{
   val outputOk = {
@@ -95,13 +96,8 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture 
 
 export async function uploadArtwork(file, upload) {
     if (upload) {
-        let form = new FormData();
-        form.append("image", file)
-        return fetch("https://api.imgbb.com/1/upload?key=951beda2107cac29c2409c886d4a192b", {
-            method: 'POST',
-            mode: 'cors',
-            body: form,
-        }).then(res => res.json())
-            .then(res => res.data.url)
+        const result = await ipfs.add(file)
+        const url = `https://ipfs.io/ipfs/${result.path}`
+        return url
     } else return null
 }
