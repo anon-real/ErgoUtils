@@ -3,7 +3,6 @@ import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
 import {encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
-import IPFS from "ipfs-core";
 
 const template = `{
     val outputOk = {
@@ -25,8 +24,6 @@ const template = `{
 
 const pictureType = [0x01, 0x01]
 const audioType = [0x01, 0x02]
-
-var ipflInstance;
 
 export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, isPicture = true, url = null) {
     let ourAddr = getWalletAddress();
@@ -98,11 +95,15 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture 
 
 export async function uploadArtwork(file, upload) {
     if (upload) {
-        if (!ipflInstance) {
-            ipflInstance = await IPFS.create();
-        }
-
-        let cid = (await ipflInstance.add(file)).cid.toV1().toString();
-        return `https://cloudflare-ipfs.com/ipfs/${cid}`;
+        return fetch("https://api.nft.storage/upload", {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDFGRThhMjE1ODZBODE5QTk1QzVDNDE1NTRmZUFhRDdiODdiZDVEOTUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYzMDYxNTQ2Mzg3MSwibmFtZSI6ImVyZ28tdXRpbHMifQ.AyYuhOEoWZQm2LEE_JWAQPKS4lfPNuvdz7DWqucVL0Q',
+            },
+            body: file,
+        }).then(res => res.json())
+            .then(res => { 
+                return `ipfs://${res.value.cid}`
+            })
     } else return null;
 }

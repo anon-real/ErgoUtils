@@ -96,7 +96,7 @@ export default class PictureNFT extends React.Component {
         geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum)
             .then(res => {
                 uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
-                    if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to imgbb.com")
+                    if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
                     let description = this.state.description
                     let tokenName = this.state.tokenName
                     issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
@@ -284,10 +284,8 @@ export default class PictureNFT extends React.Component {
                                                     onChange={(e) => this.setState({upload: e.target.checked})}
                                                     label="Upload Artwork"/>
                                                 <FormText color="muted">
-                                                    If enabled, the artwork will be uploaded to imgbb.com; useful for
+                                                    If enabled, the artwork will be uploaded to IPFS protocol; useful for
                                                     presenting artwork in auctioning.
-                                                    <br/>
-                                                    The size must be less than 32 MB
                                                 </FormText>
                                             </FormGroup>
                                         </Col>
