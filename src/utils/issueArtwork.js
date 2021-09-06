@@ -95,12 +95,12 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture 
 
 export async function uploadArtwork(file, upload) {
     if (upload) {
-        return fetch("https://api.nft.storage/upload", {
+        let form = new FormData();
+        form.append('file', file);
+
+        return fetch('https://ergoutilsupload.azurewebsites.net/ipfs/', {
             method: 'POST',
-            headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDFGRThhMjE1ODZBODE5QTk1QzVDNDE1NTRmZUFhRDdiODdiZDVEOTUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYzMDYxNTQ2Mzg3MSwibmFtZSI6ImVyZ28tdXRpbHMifQ.AyYuhOEoWZQm2LEE_JWAQPKS4lfPNuvdz7DWqucVL0Q',
-            },
-            body: file,
+            body: form,
         }).then(res => res.json())
             .then(res => { 
                 return `ipfs://${res.value.cid}`
