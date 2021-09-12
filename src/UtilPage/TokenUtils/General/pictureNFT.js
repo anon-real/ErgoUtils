@@ -95,7 +95,7 @@ export default class PictureNFT extends React.Component {
         this.setState({loading: true})
         geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum)
             .then(res => {
-                uploadArtwork(this.state.file, this.state.upload).then(uploadRes => {
+                uploadArtwork(this.state.file, true).then(uploadRes => {
                     if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
                     let description = this.state.description
                     let tokenName = this.state.tokenName
@@ -254,14 +254,14 @@ export default class PictureNFT extends React.Component {
                                             link to the artwork</FormText>
                                     </FormGroup>
                                     <Row>
-                                        <Col md='6'>
+                                        <Col md='12'>
                                             <FormGroup>
                                                 <Label for="exampleFile">Artwork File</Label>
                                                 <Input onChange={this.hashFile} type="file" name="file"
                                                        style={{overflowY: 'hidden'}}
                                                        id="exampleFile"/>
                                                 <FormText color="muted">
-                                                    will be only used to calculate the checksum of your artwork locally
+                                                    its checksum will be calculated locally. Also, it will be uploaded to IPFS
                                                 </FormText>
                                                 {this.state.checksum &&
                                                 <p>checksum <Clipboard
@@ -275,18 +275,6 @@ export default class PictureNFT extends React.Component {
                                                 </Clipboard>{' '}
 
                                                 </p>}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <CustomInput
-                                                    type="checkbox" id="upload"
-                                                    onChange={(e) => this.setState({upload: e.target.checked})}
-                                                    label="Upload Artwork"/>
-                                                <FormText color="muted">
-                                                    If enabled, the artwork will be uploaded to IPFS protocol; useful for
-                                                    presenting artwork in auctioning.
-                                                </FormText>
                                             </FormGroup>
                                         </Col>
                                     </Row>
