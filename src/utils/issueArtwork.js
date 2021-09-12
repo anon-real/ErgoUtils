@@ -3,6 +3,7 @@ import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
 import {encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
+import moment from "moment";
 
 const template = `{
     val outputOk = {
@@ -19,7 +20,7 @@ const template = `{
         val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 4000000
         OUTPUTS(0).value >= total && OUTPUTS(0).propositionBytes == fromBase64("$userAddress")
     }
-    sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
+    sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds) && HEIGHT < $timestampL)
 }`;
 
 const pictureType = [0x01, 0x01]
@@ -89,6 +90,7 @@ export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture 
         .replace('$toAddress', toTree)
         .replace('$artworkType', encodedAssetType)
         .replace('$curHash', artworkHash64)
+        .replace('$timestamp', moment().valueOf())
         .replaceAll('\n', '\\n');
     return p2s(script);
 }

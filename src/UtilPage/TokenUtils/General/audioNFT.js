@@ -95,24 +95,28 @@ export default class AudioNFT extends React.Component {
         this.setState({loading: true})
         geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum, false)
             .then(res => {
-                let description = this.state.description
-                let tokenName = this.state.tokenName
-                issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
-                    tokenName, description, res.address, this.state.checksum, false, this.state.upload)
-                    .then(regRes => {
-                        if (regRes) {
+                uploadArtwork(this.state.file, true).then(uploadRes => {
+                    if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
+                    let description = this.state.description
+                    let tokenName = this.state.tokenName
+                    issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
+                        tokenName, description, res.address, this.state.checksum, false, uploadRes)
+                        .then(regRes => {
                             this.setState({
                                 sendAddress: res.address,
                                 sendModal: true,
                             })
-                        }
 
-                    }).catch(err => {
-                    showMsg("Could not register request to the assembler", true)
-                })
-                    .finally(() => {
-                        this.setState({loading: false})
+                        }).catch(err => {
+                        showMsg("Error while issuing the artwork!", true)
                     })
+                        .finally(() => {
+                            this.setState({loading: false})
+                        })
+                }).catch(err => {
+                    showMsg(err.message, true)
+                    this.setState({loading: false})
+                })
             }).catch(err => {
             showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
@@ -250,14 +254,14 @@ export default class AudioNFT extends React.Component {
                                             link to the artwork</FormText>
                                     </FormGroup>
                                     <Row>
-                                        <Col md='6'>
+                                        <Col md='12'>
                                             <FormGroup>
                                                 <Label for="exampleFile">Artwork File</Label>
                                                 <Input onChange={this.hashFile} type="file" name="file"
                                                        style={{overflowY: 'hidden'}}
                                                        id="exampleFile"/>
                                                 <FormText color="muted">
-                                                    will be only used to calculate the checksum of your artwork locally
+                                                    its checksum will be calculated locally. Also, it will be uploaded to IPFS
                                                 </FormText>
                                                 {this.state.checksum &&
                                                 <p>checksum <Clipboard
@@ -271,35 +275,6 @@ export default class AudioNFT extends React.Component {
                                                 </Clipboard>{' '}
 
                                                 </p>}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                        </Col>
-                                        <Col md='12'>
-                                            <FormGroup>
-                                                <Label for="exampleFile">Direct Download Link</Label>
-                                                <Input
-                                                    type="text" id="upload"
-                                                    onChange={(e) => this.setState({upload: e.target.value})}
-                                                    label="Direct Link"/>
-                                                <FormText color="muted">
-                                                    Direct download link of the audio. Example of google drive: <text
-                                                    style={{
-                                                        fontSize: "10px",
-                                                    }}>https://docs.google.com/u/0/uc?export=download&id=1h0acJ12eYCw3XWMKM83vdblkxcvyjHnm</text>
-                                                    <br/>
-                                                    If you are using google drive, make sure your audio size is below 100MB
-                                                </FormText>
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='12'>
-                                            <FormGroup>
-                                                {this.state.upload && <div><audio controls="controls">
-                                                    <source src={this.state.upload}/>
-                                                </audio>
-                                                <FormText color="muted">
-                                                    You should be able to listen to your audio here if the provided link is OK!
-                                                </FormText></div>}
                                             </FormGroup>
                                         </Col>
                                     </Row>
