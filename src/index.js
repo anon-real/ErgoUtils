@@ -10,6 +10,7 @@ import configureStore from './config/configureStore';
 import {Provider} from 'react-redux';
 import {reqFollower} from "./utils/assembler";
 import {unspentBoxesFor} from "./utils/explorer";
+import {decodeColTuple} from "./utils/serializer";
 
 const store = configureStore();
 const rootElement = document.getElementById('root');

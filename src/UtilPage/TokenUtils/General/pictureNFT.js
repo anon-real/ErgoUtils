@@ -27,7 +27,7 @@ import {override} from "./index";
 import SendModal from "../../Common/sendModal";
 import {txFee} from "../../../utils/assembler";
 import {sha256} from "js-sha256";
-import {geArtworkP2s, issueArtworkNFT, uploadArtwork} from "../../../utils/issueArtwork";
+import {geArtworkP2s, issueArtworkNFT, pictureType, uploadArtwork} from "../../../utils/issueArtwork";
 import MyArtworks from "./myArtworks";
 import Clipboard from "react-clipboard.js";
 
@@ -93,14 +93,14 @@ export default class PictureNFT extends React.Component {
 
     issue() {
         this.setState({loading: true})
-        geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum)
+        geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum, pictureType)
             .then(res => {
                 uploadArtwork(this.state.file, true).then(uploadRes => {
                     if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
                     let description = this.state.description
                     let tokenName = this.state.tokenName
                     issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
-                        tokenName, description, res.address, this.state.checksum, true, uploadRes)
+                        tokenName, description, res.address, this.state.checksum, pictureType, uploadRes)
                         .then(regRes => {
                             this.setState({
                                 sendAddress: res.address,

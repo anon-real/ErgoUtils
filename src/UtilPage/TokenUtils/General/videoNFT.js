@@ -27,11 +27,11 @@ import {override} from "./index";
 import SendModal from "../../Common/sendModal";
 import {txFee} from "../../../utils/assembler";
 import {sha256} from "js-sha256";
-import {audioType, geArtworkP2s, issueArtworkNFT, uploadArtwork} from "../../../utils/issueArtwork";
+import {geArtworkP2s, issueArtworkNFT, uploadArtwork, videoType} from "../../../utils/issueArtwork";
 import MyArtworks from "./myArtworks";
 import Clipboard from "react-clipboard.js";
 
-export default class AudioNFT extends React.Component {
+export default class VideoNFT extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -91,28 +91,37 @@ export default class AudioNFT extends React.Component {
         return ergToNano(this.state.ergAmount) + 10000000
     }
 
-    async issue() {
-        try {
-            this.setState({loading: true})
-            const p2s = await geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum, audioType)
-            const audio = await uploadArtwork(this.state.file, true)
-            let cover
-            if (this.state.cover)
-                cover = await uploadArtwork(this.state.cover, true)
-            if (!audio || (this.state.cover && !cover)) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
-            let description = this.state.description
-            let tokenName = this.state.tokenName
-            const issueRes = await issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
-                tokenName, description, p2s.address, this.state.checksum, audioType, audio, cover)
-            this.setState({
-                sendAddress: issueRes.address,
-                sendModal: true,
-                loading: false
-            })
-        } catch (e) {
-            showMsg(e.message, true)
+    issue() {
+        this.setState({loading: true})
+        geArtworkP2s(this.state.toAddress, this.getErgAmount(), this.state.checksum, videoType)
+            .then(res => {
+                uploadArtwork(this.state.file, true).then(uploadRes => {
+                    if (this.state.upload && !uploadRes) throw new Error("Could not upload the artwork. Make sure you have access to nft.storage")
+                    let description = this.state.description
+                    let tokenName = this.state.tokenName
+                    issueArtworkNFT(this.getErgAmount(), this.state.toAddress,
+                        tokenName, description, res.address, this.state.checksum, videoType, uploadRes)
+                        .then(regRes => {
+                            this.setState({
+                                sendAddress: res.address,
+                                sendModal: true,
+                            })
+
+                        }).catch(err => {
+                        showMsg("Could not register request to the assembler", true)
+                    })
+                        .finally(() => {
+                            this.setState({loading: false})
+                        })
+                }).catch(err => {
+                    showMsg(err.message, true)
+                    this.setState({loading: false})
+                })
+            }).catch(err => {
+            showMsg("Could not contact the assembler service", true)
             this.setState({loading: false})
-        }
+        })
+
     }
 
     setFileChecksum(checksum, file) {
@@ -157,14 +166,14 @@ export default class AudioNFT extends React.Component {
                         <div className="widget-chart-content text-white">
                             <div className="icon-wrapper rounded-circle opacity-7">
                                 <div className="icon-wrapper-bg bg-dark opacity-6"/>
-                                <i className="lnr-music-note icon-gradient bg-warm-flame"/>
+                                <i className="lnr-film-play icon-gradient bg-warm-flame"/>
                             </div>
                             <div className="widget-numbers">
-                                Audio NFT
+                                Video NFT
                             </div>
                             <ResponsiveContainer height={50}>
                                 <div className="widget-subheading">
-                                    To issue NFT representing an audio artwork
+                                    To issue NFT representing a video artwork
                                 </div>
                             </ResponsiveContainer>
                             <ResponsiveContainer height={50}>
@@ -200,7 +209,7 @@ export default class AudioNFT extends React.Component {
                     <ModalHeader toggle={this.props.close}>
                         <ReactTooltip/>
                         <span className="fsize-1 text-muted">
-                        Issuing Audio NFT
+                        Issuing Video NFT
                     </span>
                     </ModalHeader>
                     <ModalBody>
@@ -245,15 +254,14 @@ export default class AudioNFT extends React.Component {
                                             link to the artwork</FormText>
                                     </FormGroup>
                                     <Row>
-                                        <Col md='6'>
+                                        <Col md='12'>
                                             <FormGroup>
                                                 <Label for="exampleFile">Artwork File</Label>
                                                 <Input onChange={this.hashFile} type="file" name="file"
                                                        style={{overflowY: 'hidden'}}
                                                        id="exampleFile"/>
                                                 <FormText color="muted">
-                                                    its checksum will be calculated locally. Also, it will be uploaded
-                                                    to IPFS
+                                                    its checksum will be calculated locally. Also, it will be uploaded to IPFS
                                                 </FormText>
                                                 {this.state.checksum &&
                                                 <p>checksum <Clipboard
@@ -267,19 +275,6 @@ export default class AudioNFT extends React.Component {
                                                 </Clipboard>{' '}
 
                                                 </p>}
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md='6'>
-                                            <FormGroup>
-                                                <Label for="exampleFile">Audio Cover</Label>
-                                                <Input onChange={e => this.setState({cover: e.target.files[0]})}
-                                                       type="file" name="file"
-                                                       style={{overflowY: 'hidden'}}
-                                                       id="exampleFile"/>
-                                                <FormText color="muted">
-                                                    This is optional. You can add a picture cover to your audio NFT with
-                                                    this.
-                                                </FormText>
                                             </FormGroup>
                                         </Col>
                                     </Row>

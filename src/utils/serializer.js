@@ -21,6 +21,14 @@ export async function encodeHex(reg) {
     return (await ergolib).Constant.from_byte_array(Buffer.from(reg, 'hex')).encode_to_base16()
 }
 
+export async function colTuple(a, b) {
+    return (await ergolib).Constant.from_tuple_coll_bytes(Buffer.from(a, 'hex'), Buffer.from(b, 'hex')).encode_to_base16()
+}
+
+export async function decodeColTuple(str) {
+    return (await ergolib).Constant.decode_from_base16(str).to_tuple_coll_bytes()
+}
+
 export async function encodeByteArray(reg) {
     return (await ergolib).Constant.from_byte_array(reg).encode_to_base16()
 }

@@ -6,6 +6,7 @@ import PictureNFT from "./pictureNFT";
 import MoreToCome from "../../Common/moreToCome";
 import {css} from "@emotion/core";
 import AudioNFT from "./audioNFT";
+import VideoNFT from "./videoNFT";
 
 export const override = css`
     display: block;
@@ -51,6 +52,7 @@ export default class Tokenomic extends React.Component {
                     <NewToken/>
                     <PictureNFT/>
                     <AudioNFT/>
+                    <VideoNFT/>
                     {/*<MoreToCome/>*/}
                 </Row>
             </Fragment>

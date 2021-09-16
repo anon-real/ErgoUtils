@@ -1,7 +1,7 @@
 import {addReq, getWalletAddress} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
-import {encodeByteArray, encodeHex} from "./serializer";
+import {colTuple, encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
 import moment from "moment";
 
@@ -23,12 +23,12 @@ const template = `{
     sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds) && HEIGHT < $timestampL)
 }`;
 
-const pictureType = [0x01, 0x01]
-const audioType = [0x01, 0x02]
+export const pictureType = [0x01, 0x01]
+export const audioType = [0x01, 0x02]
+export const videoType = [0x01, 0x03]
 
-export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, isPicture = true, url = null) {
+export async function issueArtworkNFT(ergAmount, toAddress, name, description, address, artHash, assetType, url = null, cover=null) {
     let ourAddr = getWalletAddress();
-    let assetType = isPicture? pictureType : audioType
 
     let outBox = {
         ergValue: ergAmount,
@@ -43,7 +43,8 @@ export async function issueArtworkNFT(ergAmount, toAddress, name, description, a
         }
     };
 
-    if (url) outBox.registers.R9 = await encodeHex(Serializer.stringToHex(url))
+    outBox.registers.R9 = await encodeHex(Serializer.stringToHex(url))
+    if (cover) outBox.registers.R9 = await colTuple(Serializer.stringToHex(url), Serializer.stringToHex(cover))
 
     let request = {
         address: address,
@@ -68,13 +69,13 @@ export async function issueArtworkNFT(ergAmount, toAddress, name, description, a
             };
             addReq(toFollow, 'reqs')
         }
+        res.address = address
         return res
     })
 }
 
-export async function geArtworkP2s(toAddress, ergAmount, artworkHash, isPicture = true) {
+export async function geArtworkP2s(toAddress, ergAmount, artworkHash, assetType) {
     let ourAddr = getWalletAddress();
-    let assetType = isPicture? pictureType : audioType
 
     let userTreeHex = new Address(ourAddr).ergoTree
     let toTreeHex = new Address(toAddress).ergoTree
