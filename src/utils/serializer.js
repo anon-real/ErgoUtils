@@ -43,39 +43,6 @@ export async function decodeString(encoded) {
     return toHexString((await ergolib).Constant.decode_from_base16(encoded).to_byte_array())
 }
 
-export async function decodeBox(box, height) {
-    let info = Serializer.stringFromHex(
-        await decodeString(box.additionalRegisters.R9)
-    );
-    info = info.split(',').map((num) => parseInt(num));
-    let finalBlock = await decodeNum(box.additionalRegisters.R5, true)
-    box.description = Serializer.stringFromHex(
-        await decodeString(box.additionalRegisters.R7)
-    );
-    box.remBlock = Math.max(finalBlock - height - 1, 0);
-    box.doneBlock =
-        ((height - info[2]) / (finalBlock - info[2])) *
-        100;
-    box.finalBlock = finalBlock;
-    box.increase = (
-        ((box.value - info[0]) / info[0]) *
-        100
-    ).toFixed(1);
-    box.minStep = info[1];
-    box.seller = Address.fromErgoTree(
-        await decodeString(box.additionalRegisters.R4)
-    ).address;
-    box.bidder = Address.fromErgoTree(
-        await decodeString(box.additionalRegisters.R8)
-    ).address;
-    box.loader = false;
-    return await box
-}
-
-export async function decodeBoxes(boxes, height) {
-    return Promise.all(boxes.map((box) => decodeBox(box, height)))
-}
-
 export function ergToNano(erg) {
     if (erg === undefined) return 0
     if (erg.startsWith('.')) return parseInt(erg.slice(1) + '0'.repeat(9 - erg.length + 1))

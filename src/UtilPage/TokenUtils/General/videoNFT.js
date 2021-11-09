@@ -21,7 +21,14 @@ import ReactTooltip from "react-tooltip";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import InputGroup from "react-bootstrap/lib/InputGroup";
 import {ergToNano, isFloat} from "../../../utils/serializer";
-import {friendlyAddress, getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../../utils/helpers";
+import {
+    friendlyAddress,
+    getWalletAddress,
+    isAddressValid,
+    isWalletSaved,
+    showMsg,
+    showStickyMsg
+} from "../../../utils/helpers";
 import {Form} from "react-bootstrap";
 import {override} from "./index";
 import SendModal from "../../Common/sendModal";
@@ -55,6 +62,8 @@ export default class VideoNFT extends React.Component {
     }
 
     openModal() {
+        showStickyMsg('Please use the Ergo Auction House to issue your artwork!')
+        return
         if (!isWalletSaved()) {
             showMsg('Configure the wallet first', false, true)
             return

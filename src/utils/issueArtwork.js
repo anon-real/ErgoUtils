@@ -7,10 +7,10 @@ import moment from "moment";
 
 const template = `{
     val outputOk = {
-        val assetType = OUTPUTS(0).R7[Coll[Byte]].get
-    val artworkHash = OUTPUTS(0).R8[Coll[Byte]].get
-    val issued = OUTPUTS(0).tokens.getOrElse(0, (INPUTS(0).id, 0L))
-    INPUTS(0).id == issued._1 && issued._2 == 1 &&
+      val assetType = OUTPUTS(0).R7[Coll[Byte]].get
+      val artworkHash = OUTPUTS(0).R8[Coll[Byte]].get
+      val issued = OUTPUTS(0).tokens.getOrElse(0, (INPUTS(0).id, 0L))
+      INPUTS(0).id == issued._1 && issued._2 == 1 &&
       OUTPUTS(0).value == $ergAmountL &&
       OUTPUTS(0).propositionBytes == fromBase64("$toAddress") &&
       assetType == fromBase64("$artworkType") &&
