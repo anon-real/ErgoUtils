@@ -15,13 +15,12 @@ import {
     SecretKey,
     SecretKeys,
     SimpleBoxSelector,
-    Tokens,
     TxBuilder,
     Wallet,
 } from 'ergo-lib-wasm-browser';
 import {toHexString} from "./serializer";
-import {addReq, getForKey, setForKey, showMsg, showStickyMsg, sleep} from "./helpers";
-import {lastBlock, sendTx, txConfNum, unspentBoxesFor} from "./explorer";
+import {addReq, getForKey, setForKey, showStickyMsg, sleep} from "./helpers";
+import {lastBlock, txConfNum, unspentBoxesFor} from "./explorer";
 import moment from "moment";
 import {post} from "./rest";
 
@@ -175,19 +174,22 @@ export async function handleEntries() {
     for (let i = 0; i < secs.length; i++) {
         let boxes = (await unspentBoxesFor(secs[i].depositAddr)).filter(box => !processedBoxes.includes(box.id))
         for (let j = 0; j < boxes.length; j++) {
-            let obfRes = await obfuscateBox(JSON.stringify(boxes[j]), secs[i].secret, secs[i].toAddr, header, secs[i].numLvls)
-            let txs = obfRes[0]
-            let lvlSecs = obfRes[1]
-            await broadcastTxs(txs)
-            addReq({
-                box: boxes[j].id,
-                value: boxes[j].value,
-                txs: txs,
-                mined: false,
-                secs: lvlSecs,
-                time: moment().valueOf()
-            }, 'doneBoxes')
-            showStickyMsg(`Successfully obfuscated ${boxes[j].value / 1e9} ERG. Check it out in the My Withdrawals section!`)
+            try {
+                let obfRes = await obfuscateBox(JSON.stringify(boxes[j]), secs[i].secret, secs[i].toAddr, header, secs[i].numLvls)
+                let txs = obfRes[0]
+                let lvlSecs = obfRes[1]
+                await broadcastTxs(txs)
+                addReq({
+                    box: boxes[j].id,
+                    value: boxes[j].value,
+                    txs: txs,
+                    mined: false,
+                    secs: lvlSecs,
+                    time: moment().valueOf()
+                }, 'doneBoxes')
+                showStickyMsg(`Successfully obfuscated ${boxes[j].value / 1e9} ERG. Check it out in the My Withdrawals section!`)
+            } catch (e) {
+            }
         }
     }
     await sleep(10000)
