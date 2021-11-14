@@ -75,15 +75,22 @@ export function secToAddr(sec) {
     return SecretKey.dlog_from_bytes(Buffer.from(sec, 'hex')).get_address().to_base58(0)
 }
 
-export function obfuscateBox(box, secret, outAddr, header, numLvls) {
+export function obfuscateBox(box, secret, outAddr, header, numLvlsDef) {
     let levelSecs = []
     let txs = []
     outAddr = Address.from_mainnet_str(outAddr);
 
-    let curIn = ErgoBox.from_json(box)
+        let curIn = ErgoBox.from_json(box)
     let inTokens = curIn.tokens()
     let curs = new ErgoBoxes(curIn)
     let curSecs = [SecretKey.dlog_from_bytes(Buffer.from(secret, 'hex'))]
+
+    let numLvls = numLvlsDef
+    let txFee = 10000000
+    let amount = -txFee
+    for (let j = 0; j < curs.len(); j++) amount += curs.get(j).value().as_i64().as_num()
+    if (amount < 100000000)
+        numLvls = 0
 
     for (let i = 0; i < numLvls + 1; i++) {
         const sks = new SecretKeys();
