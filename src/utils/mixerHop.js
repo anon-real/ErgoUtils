@@ -89,15 +89,20 @@ export function obfuscateBox(box, secret, outAddr, header, numLvls) {
         const sks = new SecretKeys();
         curSecs.forEach(sec => sks.add(sec))
         curSecs = []
+        let rnd = randInt()
+
+        let txFee = getFee()
+        let amount = -txFee
+        for (let j = 0; j < curs.len(); j++) amount += curs.get(j).value().as_i64().as_num()
+
+        if (amount < 100000000)
+            rnd = 1
         for (let j = 0; j < randInt(); j++)
             curSecs.push(SecretKey.random_dlog())
         levelSecs.push(curSecs.map(sec => toHexString(sec.to_bytes())))
 
 
         const outs = ErgoBoxCandidates.empty();
-        let txFee = getFee()
-        let amount = -txFee
-        for (let j = 0; j < curs.len(); j++) amount += curs.get(j).value().as_i64().as_num()
         let inSum = amount
         while (outs.len() < curSecs.length - 1 && i < numLvls) {
             let split = chunks[randInt(0, chunks.length - 1)]
