@@ -155,7 +155,7 @@ export default class ToHolders extends React.Component {
                 {/*    }}*/}
                 {/*    isOpen={this.state.myAirdrops}*/}
                 {/*/>*/}
-                <Col md="4">
+                <Col md="4" style={{pointerEvents: 'none', opacity: '70%'}}>
                     <div className="card mb-3 bg-premium-dark widget-chart card-border">
                         <div className="widget-chart-content text-white">
                             <div className="icon-wrapper rounded-circle opacity-7">
