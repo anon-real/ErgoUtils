@@ -1,4 +1,5 @@
 import {addReq, getWalletAddress,} from './helpers';
+import moment from "moment";
 import {Address} from '@coinbarn/ergo-ts';
 import {follow, p2s, txFee} from "./assembler";
 
@@ -13,7 +14,7 @@ const template = `{
     val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 4000000
     OUTPUTS(0).value >= total && OUTPUTS(0).propositionBytes == fromBase64("$userAddress")
   }
-  sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds))
+  sigmaProp(OUTPUTS.size == 2 && (outputOk || returnFunds) && HEIGHT < $timestampL)
 }`;
 
 export async function issueToken(quantity, ergAmount, toAddress, name, description, decimals, address) {
@@ -68,6 +69,7 @@ export async function getTokenP2s(toAddress, quantity, ergAmount) {
         .replace('$ergAmount', ergAmount)
         .replace('$amount', quantity)
         .replace('$toAddress', toTree)
+        .replace('$timestamp', moment().valueOf())
         .replaceAll('\n', '\\n');
     return p2s(script);
 }
