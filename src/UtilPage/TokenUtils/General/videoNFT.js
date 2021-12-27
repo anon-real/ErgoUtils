@@ -20,7 +20,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import ReactTooltip from "react-tooltip";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import InputGroup from "react-bootstrap/lib/InputGroup";
-import {ergToNano, isFloat} from "../../../utils/serializer";
+import {currencyToLong, isFloat} from "../../../utils/serializer";
 import {
     friendlyAddress,
     getWalletAddress,
@@ -32,11 +32,11 @@ import {
 import {Form} from "react-bootstrap";
 import {override} from "./index";
 import SendModal from "../../Common/sendModal";
-import {txFee} from "../../../utils/assembler";
 import {sha256} from "js-sha256";
 import {geArtworkP2s, issueArtworkNFT, uploadArtwork, videoType} from "../../../utils/issueArtwork";
 import MyArtworks from "./myArtworks";
 import Clipboard from "react-clipboard.js";
+import {txFee} from "../../../utils/consts";
 
 export default class VideoNFT extends React.Component {
     constructor(props) {
@@ -97,7 +97,7 @@ export default class VideoNFT extends React.Component {
     }
 
     getErgAmount() {
-        return ergToNano(this.state.ergAmount) + 10000000
+        return currencyToLong(this.state.ergAmount) + 10000000
     }
 
     issue() {

@@ -43,13 +43,19 @@ export async function decodeString(encoded) {
     return toHexString((await ergolib).Constant.decode_from_base16(encoded).to_byte_array())
 }
 
-export function ergToNano(erg) {
-    if (erg === undefined) return 0
-    if (erg.startsWith('.')) return parseInt(erg.slice(1) + '0'.repeat(9 - erg.length + 1))
-    let parts = erg.split('.')
+export function currencyToLong(val, decimal = 9) {
+    if (typeof val !== 'string') val = String(val)
+    if (val === undefined) return 0
+    if (val.startsWith('.')) return parseInt(val.slice(1) + '0'.repeat(decimal - val.length + 1))
+    let parts = val.split('.')
     if (parts.length === 1) parts.push('')
-    if (parts[1].length > 9) return 0
-    return parseInt(parts[0] + parts[1] + '0'.repeat(9 - parts[1].length))
+    if (parts[1].length > decimal) return 0
+    return parseInt(parts[0] + parts[1] + '0'.repeat(decimal - parts[1].length))
+}
+
+export function longToCurrency(val, decimal = 9) {
+    if (typeof val !== "number") val = parseInt(val)
+    return (val / Math.pow(10, decimal)).toFixed(decimal)
 }
 
 export function isFloat(num) {

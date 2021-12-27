@@ -20,14 +20,14 @@ import BeatLoader from "react-spinners/BeatLoader";
 import ReactTooltip from "react-tooltip";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import InputGroup from "react-bootstrap/lib/InputGroup";
-import {ergToNano, isFloat, isNatural} from "../../../utils/serializer";
+import {currencyToLong, isFloat, isNatural} from "../../../utils/serializer";
 import {getWalletAddress, isAddressValid, isWalletSaved, showMsg} from "../../../utils/helpers";
 import {Form} from "react-bootstrap";
 import {override} from "./index";
 import {getTokenP2s, issueToken} from "../../../utils/issueToken";
 import SendModal from "../../Common/sendModal";
-import {txFee} from "../../../utils/assembler";
 import MyTokens from "./myTokens";
+import {txFee} from "../../../utils/consts";
 
 export default class NewToken extends React.Component {
     constructor(props) {
@@ -39,7 +39,7 @@ export default class NewToken extends React.Component {
             ergAmount: "0.1",
             decimals: 0,
             description: "",
-            tokenName: "",
+            tokenName: "ChooseName",
             tokenAmount: 10000,
         };
 
@@ -80,7 +80,7 @@ export default class NewToken extends React.Component {
     }
 
     getErgAmount() {
-        return ergToNano(this.state.ergAmount) + 10000000
+        return currencyToLong(this.state.ergAmount) + 10000000
     }
 
     okToIssue() {
@@ -331,6 +331,8 @@ export default class NewToken extends React.Component {
                                 </Form>
                             </fieldset>
 
+                            <br/>
+                            {this.state.tokenName && <b>Your will receive {(this.state.tokenAmount / (Math.pow(10, this.state.decimals))).toFixed(this.state.decimals)} of {this.state.tokenName} into your wallet</b>}
                         </div>
                     </ModalBody>
                     <ModalFooter>

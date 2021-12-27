@@ -12336,3 +12336,19 @@ svg {
   display: block;
   margin: auto;
 }
+
+.fixTableHead {
+  overflow-y: auto;
+  height: 400px;
+}
+.fixTableHead thead th {
+  position: sticky;
+  top: 0;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background: whitesmoke;
+}

@@ -9,8 +9,7 @@ import Main from './UtilPage/Main';
 import configureStore from './config/configureStore';
 import {Provider} from 'react-redux';
 import {reqFollower} from "./utils/assembler";
-import {unspentBoxesFor} from "./utils/explorer";
-import {decodeColTuple} from "./utils/serializer";
+import {getInt64Bytes} from "./utils/helpers";
 
 const store = configureStore();
 const rootElement = document.getElementById('root');

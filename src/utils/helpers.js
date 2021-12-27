@@ -1,6 +1,6 @@
 import React from 'react';
 import {Flip, Slide, toast} from 'react-toastify';
-import {Address} from "@coinbarn/ergo-ts";
+import {Address, AddressKind} from "@coinbarn/ergo-ts";
 
 const explorerUrl = 'https://explorer.ergoplatform.com/en/';
 
@@ -88,6 +88,10 @@ export function isAddressValid(address) {
     }
 }
 
+export function isP2pk(address) {
+    return new Address(address).getType() === AddressKind.P2PK
+}
+
 export function getForKey(key) {
     let reqs = JSON.parse(localStorage.getItem(key));
     if (reqs === null) reqs = []
@@ -106,4 +110,9 @@ export function addReq(req, key) {
 
 export function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export function getInt64Bytes(x) {
+    let y= Math.floor(x/2**32);
+    return [y,(y<<8),(y<<16),(y<<24), x,(x<<8),(x<<16),(x<<24)].map(z=> z>>>24)
 }

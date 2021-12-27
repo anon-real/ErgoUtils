@@ -1,9 +1,7 @@
 import {get, post} from './rest';
 import {addReq, getForKey, getUrl, setForKey, showStickyMsg,} from './helpers';
 import moment from "moment";
-
-const url = 'https://assembler.ergoutils.org/';
-export const txFee = 2000000
+import {url} from "./consts";
 
 export async function follow(request) {
     return await post(getUrl(url) + '/follow', request).then((res) =>

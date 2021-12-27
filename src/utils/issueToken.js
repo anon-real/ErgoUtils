@@ -1,7 +1,8 @@
 import {addReq, getWalletAddress,} from './helpers';
 import moment from "moment";
 import {Address} from '@coinbarn/ergo-ts';
-import {follow, p2s, txFee} from "./assembler";
+import {follow, p2s} from "./assembler";
+import {txFee} from "./consts";
 
 const template = `{
   val outputOk = {

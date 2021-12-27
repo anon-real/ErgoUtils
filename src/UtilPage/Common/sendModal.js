@@ -3,6 +3,7 @@ import {Button, Container, Modal, ModalBody, ModalFooter, ModalHeader} from "rea
 import Clipboard from 'react-clipboard.js';
 import {friendlyAddress, friendlyToken, showMsg} from "../../utils/helpers";
 import QRCode from "react-qr-code";
+import {longToCurrency} from "../../utils/serializer";
 
 export default class SendModal extends React.Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class SendModal extends React.Component {
                                 >
                                     exactly{' '}
                                     {this.props.amount}{' '}
-                                    erg
+                                    ERG
                                 </Clipboard>}{' '}
                                 {this.props.withToken && <Clipboard
                                     component="b"
@@ -49,8 +50,8 @@ export default class SendModal extends React.Component {
                                     onSuccess={() => showMsg('Copied!')}
                                 >
                                     {!this.props.ignoreErg && <span>and {' '}</span>}
-                                    {this.props.tokenQuantity}{' '}
-                                    of {friendlyAddress(this.props.tokenId, 10)} token
+                                    {longToCurrency(this.props.tokenQuantity, this.props.decimals)}{' '}
+                                    {this.props.tokenName}
                                 </Clipboard>}{' '}
                                 to{' '}
                                 <Clipboard
@@ -73,7 +74,7 @@ export default class SendModal extends React.Component {
                                 Your funds will be safe. Smart contracts are being used to prevent the intermediate service from cheating!
                             </p>
                             <QRCode value={"https://explorer.ergoplatform.com/payment-request?address=" + this.props.address +
-                            "&amount=" + this.props.amount}/>
+                            "&amount=" + this.props.amount + `&${this.props.tokenId}=${this.props.tokenQuantity}`}/>
                         </Container>
                     </ModalBody>
                     <ModalFooter>

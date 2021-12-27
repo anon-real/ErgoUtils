@@ -1,9 +1,10 @@
 import {addReq, getWalletAddress} from './helpers';
 import {Address} from '@coinbarn/ergo-ts';
-import {follow, p2s, txFee} from "./assembler";
+import {follow, p2s} from "./assembler";
 import {colTuple, encodeByteArray, encodeHex} from "./serializer";
 import {Serializer} from "@coinbarn/ergo-ts/dist/serializer";
 import moment from "moment";
+import {txFee} from "./consts";
 
 const template = `{
     val outputOk = {

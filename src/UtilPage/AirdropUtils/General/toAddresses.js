@@ -16,16 +16,17 @@ import {
 import Row from "react-bootstrap/lib/Row";
 import BeatLoader from "react-spinners/BeatLoader";
 import ReactTooltip from "react-tooltip";
-import {ergToNano, isFloat} from "../../../utils/serializer";
+import {currencyToLong, isFloat} from "../../../utils/serializer";
 import {getForKey, isWalletSaved, showMsg} from "../../../utils/helpers";
 import {Form, FormGroup} from "react-bootstrap";
 import {override} from "./index";
 import SendModal from "../../Common/sendModal";
-import {txFee} from "../../../utils/assembler";
 import AddrList from "./listModal";
 import InputGroup from "react-bootstrap/lib/InputGroup";
 import {addrAirdropFee, getAddrAirdropP2s, startAddrAirdrop} from "../../../utils/addressAirdrop";
 import MyAddrAirdrops from "./myAddrAirdrops";
+import {getTokenInfo} from "../../../utils/explorer";
+import {txFee} from "../../../utils/consts";
 
 export default class ToAddresses extends React.Component {
     constructor(props) {
@@ -43,6 +44,30 @@ export default class ToAddresses extends React.Component {
         this.okToStart = this.okToStart.bind(this);
         this.initiate = this.initiate.bind(this);
         this.openListModal = this.openListModal.bind(this);
+        this.changeToken = this.changeToken.bind(this);
+    }
+
+    async changeToken(tokenId) {
+        try {
+            this.setState({
+                tokenId: tokenId,
+                loading: true
+            });
+            const info = await getTokenInfo(tokenId)
+            this.setState({
+                loading: false,
+                decimals: info.decimals,
+                tokenName: info.name
+            })
+        } catch (e) {
+            this.setState({
+                loading: false,
+                decimals: undefined,
+                tokenName: undefined
+            })
+            console.log(e)
+        }
+
     }
 
     openModal() {
@@ -77,7 +102,7 @@ export default class ToAddresses extends React.Component {
 
     okToStart() {
         return this.state.selected &&
-            ergToNano(this.state.distErg) >= 100000000 &&
+            currencyToLong(this.state.distErg) >= 100000000 &&
             (!this.state.withToken || (this.state.tokenId && this.state.tokenQuantity > 0)) &&
             !this.state.loading
     }
@@ -98,7 +123,7 @@ export default class ToAddresses extends React.Component {
             tokenAmount = 0
         }
         this.setState({loading: true})
-        let ergAmount = ergToNano(this.state.distErg)
+        let ergAmount = currencyToLong(this.state.distErg)
         let includingFee = this.state.includingFee
         if (this.state.withToken) {
             ergAmount = 10000000
@@ -165,6 +190,8 @@ export default class ToAddresses extends React.Component {
                     tokenQuantity={tokenQuantity}
                     withToken={this.state.withToken}
                     ignoreErg={this.state.withToken}
+                    tokenName={this.state.tokenName}
+                    decimals={this.state.decimals}
                 />
                 <MyAddrAirdrops
                     close={() => {
@@ -335,7 +362,7 @@ export default class ToAddresses extends React.Component {
                                                 <Input
                                                     type="text"
                                                     invalid={
-                                                        ergToNano(this.state.distErg) < 100000000
+                                                        currencyToLong(this.state.distErg) < 100000000
                                                     }
                                                     value={
                                                         this.state.distErg
@@ -374,9 +401,7 @@ export default class ToAddresses extends React.Component {
                                                 value={this.state.tokenId}
                                                 style={{fontSize: "11px"}}
                                                 onChange={(event) => {
-                                                    this.setState({
-                                                        tokenId: event.target.value
-                                                    });
+                                                    this.changeToken(event.target.value)
                                                 }}
                                                 type="text"
                                                 id="tokenId"
@@ -399,6 +424,9 @@ export default class ToAddresses extends React.Component {
                                         />
                                         <FormText>
                                             Token quantity
+                                            {!this.state.loading && this.state.tokenQuantity > 0 && this.state.tokenId && this.state.decimals > 0 && <b>
+                                                - {(this.state.tokenQuantity / (Math.pow(10, this.state.decimals))).toFixed(this.state.decimals)} of {this.state.tokenName}
+                                            </b>}
                                         </FormText>
                                     </Col>
                                 </Row>}

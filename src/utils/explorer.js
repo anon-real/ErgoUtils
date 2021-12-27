@@ -134,3 +134,15 @@ export async function txConfNum(id) {
     if (tx.summary === undefined) return 0
     else return tx.summary.confirmationsCount
 }
+
+export async function getHolders(tokenId, offset) {
+    let res = await get(`https://api.ergoplatform.com/api/v1/boxes/unspent/byTokenId/${tokenId}?limit=100&offset=${offset}`)
+    return await res.json()
+}
+
+export async function getTokenInfo(tokenId) {
+    let res = await get(`https://api.ergoplatform.com/api/v1/assets/search/byTokenId?query=${tokenId}`)
+    res = await res.json()
+    console.log(res)
+    return res.items[0]
+}
