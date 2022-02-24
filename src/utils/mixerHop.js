@@ -20,7 +20,7 @@ import {
 } from 'ergo-lib-wasm-browser';
 import {toHexString} from "./serializer";
 import {addReq, getForKey, setForKey, showStickyMsg, sleep} from "./helpers";
-import {lastBlock, txConfNum, unspentBoxesFor} from "./explorer";
+import {boxById, lastBlock, txConfNum, unspentBoxesFor} from "./explorer";
 import moment from "moment";
 import {post} from "./rest";
 
@@ -170,6 +170,9 @@ export async function handleEntries() {
 
     for (let i = 0; i < allBoxes.length; i++) {
         if (!allBoxes[i].mined) {
+            const bx = await boxById(allBoxes[i].txs[0].inputs[0].boxId)
+            if (bx.spentTransactionId && bx.spentTransactionId !== allBoxes[i].txs[0].id)
+                continue
             let confNum = await txConfNum(allBoxes[i].txs[allBoxes[i].txs.length - 1].id)
             if (confNum < 3) newBoxes.push(allBoxes[i])
             else {
@@ -181,7 +184,7 @@ export async function handleEntries() {
     }
     setForKey(newBoxes, 'doneBoxes')
 
-    let processedBoxes = allBoxes.map(box => box.box)
+    let processedBoxes = allBoxes.map(box => box.box).filter(box => box.mined)
 
     for (let i = 0; i < secs.length; i++) {
         let boxes = (await unspentBoxesFor(secs[i].depositAddr)).filter(box => !processedBoxes.includes(box.id))
