@@ -30,6 +30,7 @@ import {maxOut, minimalErgAmount, txFee} from "../../../utils/consts";
 import ProgressBar from "react-bootstrap/lib/ProgressBar";
 import {startAddrAirdrop} from "../../../utils/addressAirdrop";
 import {startHolderAirdrop} from "../../../utils/holderAirdrop";
+import HolderAirdrops from './HolderAirdrops';
 
 export default class ToHolders extends React.Component {
     constructor(props) {
@@ -302,6 +303,12 @@ export default class ToHolders extends React.Component {
                     withToken={this.state.withToken}
                     tokenName={this.state.distributeToken.tokenName}
                     decimals={this.state.distributeToken.decimals}
+                />
+                <HolderAirdrops
+                    close={() => {
+                        this.setState({myAirdrops: false})
+                    }}
+                    isOpen={this.state.myAirdrops}
                 />
                 {/*<MyAddrAirdrops*/}
                 {/*    close={() => {*/}

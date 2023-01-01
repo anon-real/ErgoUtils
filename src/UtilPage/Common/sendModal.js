@@ -45,14 +45,23 @@ export default class SendModal extends React.Component {
                                 {this.props.withToken && <Clipboard
                                     component="b"
                                     data-clipboard-text={
-                                        this.props.tokenId
+                                        this.props.tokenQuantity
                                     }
                                     onSuccess={() => showMsg('Copied!')}
                                 >
                                     {!this.props.ignoreErg && <span>and {' '}</span>}
                                     {longToCurrency(this.props.tokenQuantity, this.props.decimals)}{' '}
-                                    {this.props.tokenName}
                                 </Clipboard>}{' '}
+                                    {this.props.withToken && <Clipboard
+                                        component="b"
+                                        data-clipboard-text={
+                                            this.props.tokenId
+                                        }
+                                        onSuccess={() => showMsg('Copied!')}
+                                    >
+
+                                        {this.props.tokenName}
+                                    </Clipboard>}{' '}
                                 to{' '}
                                 <Clipboard
                                     component="b"
@@ -70,7 +79,7 @@ export default class SendModal extends React.Component {
                                 ></b>
                                 ; the operation will be done automatically afterward.
                             </p>
-                            {this.props.withToken && <p>
+                            {this.props.ignoreErg && this.props.withToken && <p>
                                 Send <b>0.01 ERG</b> alongside the token.
                             </p>}
                             <p>

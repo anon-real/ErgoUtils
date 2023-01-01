@@ -29,7 +29,7 @@ const template = `{
   }
   val returnFunds = {
     val tok = OUTPUTS(0).tokens.getOrElse(0, (INPUTS(0).id, 0L))
-    val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 4000000
+    val total = INPUTS.fold(0L, {(x:Long, b:Box) => x + b.value}) - 10000000
     OUTPUTS(0).value >= total && OUTPUTS(0).propositionBytes == fromBase64("$userAddress") &&
         (toSendToken == 0 || (tok._1 == tokenId && tok._2 == toSendToken))
   }
@@ -38,7 +38,6 @@ const template = `{
 
 export async function startHolderAirdrop(outs) {
     const address = (await getHolderAirdropP2s(outs)).address
-    console.log(address)
     let ourAddr = getWalletAddress();
     let fee = txFee
     const totalErg = outs.map(out => out.value).reduce((a, b) => a + b, 0) + fee
@@ -59,6 +58,7 @@ export async function startHolderAirdrop(outs) {
             dataInputs: [],
         },
     };
+    console.log(request)
     return follow(request).then(res => {
         if (res.id !== undefined) {
             let toFollow = {

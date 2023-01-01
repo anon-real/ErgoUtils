@@ -54,7 +54,8 @@ export function currencyToLong(val, decimal = 9) {
 }
 
 export function longToCurrency(val, decimal = 9) {
-    if (typeof val !== "number") val = parseInt(val)
+    if (decimal === 0) return val
+    if (typeof val !== "number") val = Number(val)
     return (val / Math.pow(10, decimal)).toFixed(decimal)
 }
 
