@@ -111,7 +111,7 @@ export default class ToAddresses extends React.Component {
         let lst = this.state.addrList.filter(item => item.name === this.state.selected)[0]
         if (this.state.withToken) {
             if (this.state.tokenQuantity % lst.addresses.length) {
-                showMsg(`Can not equally distribute ${this.state.tokenQuantity} token among ${lst.addresses.length} addresses in the list!`, false, true)
+                showMsg(`Can not equally distribute ${this.state.tokenQuantity} token among ${lst.addresses.length} addresses! Change the token amount to ${(Math.floor(Number(this.state.tokenQuantity) / lst.addresses.length)) * lst.addresses.length}.`, false, true)
                 return
             }
         }

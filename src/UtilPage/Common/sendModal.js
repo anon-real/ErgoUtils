@@ -70,6 +70,9 @@ export default class SendModal extends React.Component {
                                 ></b>
                                 ; the operation will be done automatically afterward.
                             </p>
+                            {this.props.withToken && <p>
+                                Send <b>0.01 ERG</b> alongside the token.
+                            </p>}
                             <p>
                                 Your funds will be safe. Smart contracts are being used to prevent the intermediate service from cheating!
                             </p>
